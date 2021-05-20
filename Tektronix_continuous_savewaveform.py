@@ -17,7 +17,7 @@ def AddLineBreak(line):
 
 
 parser = argparse.ArgumentParser(
-    description="Use this script to generate scripts for osilloscope Author: Zifeng XU, email: zifeng.xu@cern.ch")
+    description="Use this script to generate scripts for oscilloscope Author: Zifeng XU, email: zifeng.xu@cern.ch")
 
 parser.add_argument("output_filename", type=str,
                     help="Output file name for waveforms")
@@ -29,7 +29,8 @@ parser.add_argument("--save_channels", type=str, default="CH1,CH2",
                     help="Which channel should we save in the scripts? Example: CH1,CH2")
 parser.add_argument("--output_dir", type=str, default="/usb0",
                     help="Which directory to save waveform data, please make sure you have this directory in you USB. For examle: /usb0/waveform_data")
-
+parser.add_argument("--oscilloscope_setup_scripts", type=str, default="",
+                    help="You should give the full path and setup scripts name here. i.e. /usb0/yoursetupscripts")
 args = parser.parse_args()
 print("All parameters get from commandline are:")
 print(args)
@@ -39,16 +40,17 @@ output_scripts_name = args.output_scripts_name
 n_save_waveforms = args.n_save_waveforms
 save_channels = args.save_channels
 output_dir = args.output_dir
+oscilloscope_setup_scripts = args.oscilloscope_setup_scripts
 
-print(output_filename)
-print(output_scripts_name)
-print(n_save_waveforms)
-print(save_channels)
-print(output_dir)
+# print(output_filename)
+# print(output_scripts_name)
+# print(n_save_waveforms)
+# print(save_channels)
+# print(output_dir)
 
-cm_begin_of_scripts = "Talker Listener Script: <<Script1>>"
+cm_begin_of_scripts = "Talker Listener Script: <<Script0>>"
 # Add command here in the future to setup oscilloscope
-cm_setup_oscillosocpe = ""
+cm_setup_oscillosocpe = "RECAll:SETUp"
 cm_stop_oscilloscope = "ACQUIRE:STOPAFTER SEQUENCE"
 cm_single = "ACQUIRE:STATE ON"
 cm_wait_response = "*OPC?"
@@ -60,7 +62,11 @@ if __name__ == "__main__":
         # Write headers into output_scripts_file
         file_object.write(AddLineBreak(cm_begin_of_scripts))
         # setup oscillopscope
-        file_object.write(AddLineBreak(cm_setup_oscillosocpe))
+        # if len(oscilloscope_setup_scripts) > 0, setup oscilloscope
+        if(len(oscilloscope_setup_scripts) > 0):
+            file_object.write(AddLineBreak("{0} {1}".format(cm_setup_oscillosocpe, oscilloscope_setup_scripts)))
+            file_object.write(AddLineBreak(cm_wait_response))
+            print("Use {0} setup osciloscope.".format(oscilloscope_setup_scripts))
         # stop oscilloscope, prepare to save waveform
         file_object.write(AddLineBreak(cm_stop_oscilloscope))
 
