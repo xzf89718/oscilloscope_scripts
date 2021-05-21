@@ -1,2 +1,7 @@
 *.txt
 .vscode/
+*.png
+*.eps
+*.pdf
+*.root
+*.csv
