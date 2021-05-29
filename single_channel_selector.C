@@ -1,5 +1,5 @@
-#define analysis_waveform_cxx
-// The class definition in analysis_waveform.h has been generated automatically
+#define single_channel_selector_cxx
+// The class definition in single_channel_selector.h has been generated automatically
 // by the ROOT utility TTree::MakeSelector(). This class is derived
 // from the ROOT class TSelector. For more information on the TSelector
 // framework see $ROOTSYS/README/README.SELECTOR or the ROOT User Manual.
@@ -19,25 +19,17 @@
 //
 // To use this file, try the following session on your Tree T:
 //
-// root> T->Process("analysis_waveform.C")
-// root> T->Process("analysis_waveform.C","some options")
-// root> T->Process("analysis_waveform.C+")
+// root> T->Process("single_channel_selector.C")
+// root> T->Process("single_channel_selector.C","some options")
+// root> T->Process("single_channel_selector.C+")
 //
 
 
-#include "analysis_waveform.h"
+#include "single_channel_selector.h"
 #include <TH2.h>
 #include <TStyle.h>
-#include "TH1F.h"
-#include "TCanvas.h"
-#include "TGraph.h"
-#include <iostream>
 
-using std::cout;
-using std::endl;
-using std::clog;
-
-void analysis_waveform::Begin(TTree * /*tree*/)
+void single_channel_selector::Begin(TTree * /*tree*/)
 {
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
@@ -46,7 +38,7 @@ void analysis_waveform::Begin(TTree * /*tree*/)
    TString option = GetOption();
 }
 
-void analysis_waveform::SlaveBegin(TTree * /*tree*/)
+void single_channel_selector::SlaveBegin(TTree * /*tree*/)
 {
    // The SlaveBegin() function is called after the Begin() function.
    // When running with PROOF SlaveBegin() is called on each slave server.
@@ -56,7 +48,7 @@ void analysis_waveform::SlaveBegin(TTree * /*tree*/)
 
 }
 
-Bool_t analysis_waveform::Process(Long64_t entry)
+Bool_t single_channel_selector::Process(Long64_t entry)
 {
    // The Process() function is called for each entry in the tree (or possibly
    // keyed object in the case of PROOF) to be processed. The entry argument
@@ -76,15 +68,10 @@ Bool_t analysis_waveform::Process(Long64_t entry)
 
    fReader.SetLocalEntry(entry);
 
-   for(auto i=0;i<*CH1_size;i++)
-   {
-      cout << "voltage:" << CH1_voltage[i] << endl;
-      cout << "time:" << CH1_time[i] << endl;
-   }
    return kTRUE;
 }
 
-void analysis_waveform::SlaveTerminate()
+void single_channel_selector::SlaveTerminate()
 {
    // The SlaveTerminate() function is called after all entries or objects
    // have been processed. When running with PROOF SlaveTerminate() is called
@@ -92,7 +79,7 @@ void analysis_waveform::SlaveTerminate()
 
 }
 
-void analysis_waveform::Terminate()
+void single_channel_selector::Terminate()
 {
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
