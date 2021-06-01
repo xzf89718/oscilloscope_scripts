@@ -15,39 +15,49 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
+#include "TTree.h"
 
 // Headers needed by this particular selector
 
-
-class single_channel_selector : public TSelector {
-public :
-   TTreeReader     fReader;  //!the tree reader
-   TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
+class single_channel_selector : public TSelector
+{
+public:
+   TTreeReader fReader; //!the tree reader
+   TTree *fChain = 0;   //!pointer to the analyzed TTree or TChain
 
    // Readers to access the data (delete the ones you do not need).
    TTreeReaderValue<Int_t> size = {fReader, "size"};
    TTreeReaderArray<Double_t> time = {fReader, "time"};
    TTreeReaderArray<Int_t> voltage = {fReader, "voltage"};
 
+   single_channel_selector(TTree * /*tree*/ = 0) {}
+   virtual ~single_channel_selector() {}
+   virtual Int_t Version() const { return 2; }
+   virtual void Begin(TTree *tree);
+   virtual void SlaveBegin(TTree *tree);
+   virtual void Init(TTree *tree);
+   virtual Bool_t Notify();
+   virtual Bool_t Process(Long64_t entry);
+   virtual Int_t GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
+   virtual void SetOption(const char *option) { fOption = option; }
+   virtual void SetObject(TObject *obj) { fObject = obj; }
+   virtual void SetInputList(TList *input) { fInput = input; }
+   virtual TList *GetOutputList() const { return fOutput; }
+   virtual void SlaveTerminate();
+   virtual void Terminate();
 
-   single_channel_selector(TTree * /*tree*/ =0) { }
-   virtual ~single_channel_selector() { }
-   virtual Int_t   Version() const { return 2; }
-   virtual void    Begin(TTree *tree);
-   virtual void    SlaveBegin(TTree *tree);
-   virtual void    Init(TTree *tree);
-   virtual Bool_t  Notify();
-   virtual Bool_t  Process(Long64_t entry);
-   virtual Int_t   GetEntry(Long64_t entry, Int_t getall = 0) { return fChain ? fChain->GetTree()->GetEntry(entry, getall) : 0; }
-   virtual void    SetOption(const char *option) { fOption = option; }
-   virtual void    SetObject(TObject *obj) { fObject = obj; }
-   virtual void    SetInputList(TList *input) { fInput = input; }
-   virtual TList  *GetOutputList() const { return fOutput; }
-   virtual void    SlaveTerminate();
-   virtual void    Terminate();
+   ClassDef(single_channel_selector, 0);
 
-   ClassDef(single_channel_selector,0);
+private:
+   TFile *m_output_file;
+   TTree *m_tree_max_voltage;
+   TTree *m_tree_charge;
 
+   Double_t m_max_voltage;
+   Double_t m_charge;
+
+   Double_t GetMinimumValue();
+   Double_t GetCharge();
 };
 
 #endif
@@ -75,6 +85,5 @@ Bool_t single_channel_selector::Notify()
 
    return kTRUE;
 }
-
 
 #endif // #ifdef single_channel_selector_cxx
