@@ -21,8 +21,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("output_filename", type=str,
                     help="Output file name for waveforms")
-parser.add_argument("output_scripts_name", type=str,
-                    help="Output scripts name for oscilloscope scripts")
+# parser.add_argument("output_scripts_name", type=str,
+#                     help="Output scripts name for oscilloscope scripts")
 parser.add_argument("--n_save_waveforms", type=int, default=10,
                     help="N_Waveforms save in the output scripts")
 parser.add_argument("--save_channels", type=str, default="CH1,CH2",
@@ -36,7 +36,6 @@ print("All parameters get from commandline are:")
 print(args)
 
 output_filename = args.output_filename
-output_scripts_name = args.output_scripts_name
 n_save_waveforms = args.n_save_waveforms
 save_channels = args.save_channels
 output_dir = args.output_dir
@@ -48,7 +47,6 @@ oscilloscope_setup_scripts = args.oscilloscope_setup_scripts
 # print(save_channels)
 # print(output_dir)
 
-cm_begin_of_scripts = "Talker Listener Script: <<Script0>>"
 # Add command here in the future to setup oscilloscope
 cm_setup_oscillosocpe = "RECAll:SETUp"
 cm_stop_oscilloscope = "ACQUIRE:STOPAFTER SEQUENCE"
@@ -58,23 +56,26 @@ cm_synchronize = "*WAI"
 cm_save_waveform = "SAVe:WAVEfrom"
 
 if __name__ == "__main__":
-    with open(output_scripts_name, "w") as file_object:
-        # Write headers into output_scripts_file
-        file_object.write(AddLineBreak(cm_begin_of_scripts))
-        # setup oscillopscope
-        # if len(oscilloscope_setup_scripts) > 0, setup oscilloscope
-        if(len(oscilloscope_setup_scripts) > 0):
-            file_object.write(AddLineBreak("{0} {1}".format(cm_setup_oscillosocpe, oscilloscope_setup_scripts)))
-            file_object.write(AddLineBreak(cm_wait_response))
-            print("Use {0} setup osciloscope.".format(oscilloscope_setup_scripts))
-        # stop oscilloscope, prepare to save waveform
-        file_object.write(AddLineBreak(cm_stop_oscilloscope))
+    rm=pyvisa.ResourceManager()
+    Scope=rm.open_resource('USB0::0x0699::0x03C7::C011248::INSTR')
+    # Write headers into output_scripts_file
+    # setup oscillopscope
+    # if len(oscilloscope_setup_scripts) > 0, setup oscilloscope
+    if(len(oscilloscope_setup_scripts) > 0):
+        Scope.write("{0} {1}".format(cm_setup_oscillosocpe, oscilloscope_setup_scripts))
+        Scope.write(cm_wait_response)
+        print("Use {0} setup osciloscope.".format(oscilloscope_setup_scripts))
+    # stop oscilloscope, prepare to save waveform
+    # Scope.write(cm_stop_oscilloscope)
 
-        # begin to get single waveform
-        for i in range(0, n_save_waveforms):
-            for channel in save_channels.split(","):
-                save_command = "{0} {1}, {2}/{3} ".format(
-                    cm_save_waveform, channel, output_dir, output_filename+"-" + channel+"-"+str(i)+".csv")
-                # print(save_command)
-                file_object.write("{0}{1}{2}{3}".format(AddLineBreak(cm_single), AddLineBreak(
-                    cm_wait_response), AddLineBreak(save_command), AddLineBreak(cm_wait_response)))
+    # begin to get single waveform
+    for i in range(0, n_save_waveforms): 
+        Scope.write(cm_single)
+        Scope.query(cm_wait_response)
+
+        for channel in save_channels.split(","):
+            save_command = "{0} {1}, \"{2}/{3}\" ".format(
+                cm_save_waveform, channel, output_dir, output_filename+"-" + channel+"-"+str(i)+".csv")
+            print(save_command)
+            Scope.write(save_command)
+            Scope.query(cm_wait_response)
