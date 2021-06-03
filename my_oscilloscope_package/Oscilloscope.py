@@ -3,6 +3,8 @@
 # Email: zifeng.xu@cern.ch
 # Note:1, How to detect muon decay events in our lab?
 #      2, Only sample the channel you already setup
+import argparse
+from typing import ChainMap
 import pyvisa
 import time
 
@@ -16,7 +18,7 @@ class Oscilloscope():
     """
     This class include method of initialize and setup the oscilloscope via usb.
     And some methods to measure the waveform and get the data.
-  
+
     """
 
     def __init__(self, resource_name='USB0::0x0699::0x03C7::C011248::INSTR'):
@@ -30,16 +32,15 @@ class Oscilloscope():
         self.inst.encoding = 'latin_1'
         self.inst.read_termination = '\n'
         self.inst.write_termination = '\n'
-        self._channel='DEFAULT'
+        self._channel = 'DEFAULT'
         self.inst.write('*cls')  # clear ESR
         self.inst.write('header OFF')  # disable attribute echo in replies
-        print(self.inst.query('*idn?')) 
+        print(self.inst.query('*idn?'))
         # autoset
         # self.Autoset()
 
-       
     def Sampling(self, sammple_channels="CH1", M=2000):  # M is the number of sampling points
-        list_channels=sammple_channels.split(',')
+        list_channels = sammple_channels.split(',')
         # Prepare sampling
         # default setup
         # self.inst.write('*rst')
@@ -56,23 +57,26 @@ class Oscilloscope():
         self.inst.write('data:stop {0}'.format(acq_record))
         self.inst.write('wfmoutpre:byt_nr 1')  # 1 byte per sample
 
-        dic_waveforms={}
+        dic_waveforms = {}
+        dic_scaledtime = {}
         for channel in list_channels:
             self.SetChannel(channel)
             self.inst.write('data:source {0}'.format(self._channel))
             # data query
             # send message in binary form
-            bin_wave = self.inst.query_binary_values('curve?', datatype='b', container=np.array)
-            print(bin_wave)
-            
+            bin_wave = self.inst.query_binary_values(
+                'curve?', datatype='b', container=np.array)
+
             # retrieve scaling factors
             wfm_record = int(self.inst.query('wfmoutpre:nr_pt?'))
             pre_trig_record = int(self.inst.query('wfmoutpre:pt_off?'))
             t_scale = float(self.inst.query('wfmoutpre:xincr?'))
             # sub-sample trigger correction
             t_sub = float(self.inst.query('wfmoutpre:xzero?'))
-            v_scale = float(self.inst.query('wfmoutpre:ymult?'))  # volts / level
-            v_off = float(self.inst.query('wfmoutpre:yzero?'))  # reference voltage
+            v_scale = float(self.inst.query(
+                'wfmoutpre:ymult?'))  # volts / level
+            # reference voltage
+            v_off = float(self.inst.query('wfmoutpre:yzero?'))
             # reference position (level)
             v_pos = float(self.inst.query('wfmoutpre:yoff?'))
 
@@ -92,28 +96,50 @@ class Oscilloscope():
             # data type conversion
             unscaled_wave = np.array(bin_wave, dtype='double')
             scaled_wave = (unscaled_wave - v_pos) * v_scale + v_off
+            dic_scaledtime[channel] = scaled_time
+            dic_waveforms[channel] = scaled_wave
+        # return scaled_time, scaled_wave
+        return dic_scaledtime, dic_waveforms
 
-        return scaled_time, scaled_wave
+    def MeasureFreq(self, measure_channels="CH1"):  # MEASUre Frequency
+        dic_freq = {}
+        for _channel in measure_channels.split(','):
+            self.SetChannel(_channel)
+            self.inst.write(
+                ':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
+            self.inst.write(':MEASUrement:IMMed:TYPe FREQuency')
+            dic_freq[_channel] = self.inst.query(':MEASUrement:IMMed:VALue?')
+        return dic_freq
 
-    def MeasureFreq(self):  # MEASUre Frequency
-        self.inst.write(':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
-        self.inst.write(':MEASUrement:IMMed:TYPe FREQuency')
-        return (self.inst.query(':MEASUrement:IMMed:VALue?'))
+    def MeasureAmpl(self, measure_channels="CH1"):  # MEASUre Amplitude
+        dic_ampl = {}
+        for _channel in measure_channels.split(','):
+            self.SetChannel(_channel)
+            self.inst.write(
+                ':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
+            self.inst.write(':MEASUrement:IMMed:TYPe AMPlitude')
+            dic_ampl[_channel] = self.inst.query(':MEASUrement:IMMed:VALue?')
+        return dic_ampl
 
-    def MeasureAmpl(self):  # MEASUre Amplitude
-        self.inst.write(':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
-        self.inst.write(':MEASUrement:IMMed:TYPe AMPlitude')
-        return (self.inst.query(':MEASUrement:IMMed:VALue?'))
+    def MeasureHigh(self, measure_channels="CH1"):  # MEASUre Low
+        dic_high = {}
+        for _channel in measure_channels.split(','):
+            self.SetChannel(_channel)
+            self.inst.write(
+                ':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
+            self.inst.write(':MEASUrement:IMMed:TYPe HIGH')
+            dic_high[_channel] = self.inst.query(':MEASUrement:IMMed:VALue?')
+        return dic_high
 
-    def MeasureHigh(self):  # MEASUre Low
-        self.inst.write(':MEASUrement:IMMed:SOUrce1 {0}'.format(self._channel))
-        self.inst.write(':MEASUrement:IMMed:TYPe HIGH')
-        return (self.inst.query(':MEASUrement:IMMed:VALue?'))
-
-    def MeasureLow(self):  # MEASUre Low
-        self.inst.write(':MEASUrement:IMMed:SOUrce1 {0}}'.format(self._channel))
-        self.inst.write(':MEASUrement:IMMed:TYPe LOW')
-        return (self.inst.query(':MEASUrement:IMMed:VALue?'))
+    def MeasureLow(self, measure_channels="CH1"):  # MEASUre Low
+        dic_low = {}
+        for _channel in measure_channels:
+            self.SetChannel(_channel)
+            self.inst.write(
+                ':MEASUrement:IMMed:SOUrce1 {0}}'.format(self._channel))
+            self.inst.write(':MEASUrement:IMMed:TYPe LOW')
+            dic_low[_channel] = self.inst.query(':MEASUrement:IMMed:VALue?')
+        return dic_low
 
     def SetChannel(self, channel):
         """
@@ -123,30 +149,45 @@ class Oscilloscope():
 
         # Check if channel is legal
         if(channel == 'DEFAULT'):
-            print("Oscilloscop::WARNING the channel is set to DEFAULT now, no measure of data-save is proceeded")
+            print(
+                "Oscilloscop::WARNING the channel is set to DEFAULT now, no measure of data-save is proceeded")
         if(channel == 'CH1'):
-            self._channel=channel       
+            self._channel = channel
             print("Set CH1")
         elif(channel == 'CH2'):
-            self._channel=channel
+            self._channel = channel
             print("Set CH2")
-        elif(channel =='CH3'):
-            self._channel=channel
+        elif(channel == 'CH3'):
+            self._channel = channel
             print("Set CH3")
-        elif(channel=='CH4'):
-            self._channel=channel
+        elif(channel == 'CH4'):
+            self._channel = channel
             print("Set CH4")
         else:
-            self._channel="DEFAULT"
+            self._channel = "DEFAULT"
             print("The select channel should be one of CH1, CH2, CH3, CH4\nSet DEFUALT")
-
-
 
     def Autoset(self):
         self.inst.write('autoset EXECUTE')
 
     # disconnect
-    def close(self):
+    def Close(self):
         self.inst.close()
         self.resource_manager.close()
 
+
+def WriteToCsv(output_filename, array_time, array_voltage, sep=','):
+    # Check the len of time and voltage
+    length_of_time = len(array_time)
+    length_of_voltage = len(array_voltage)
+    if(not(length_of_time == length_of_voltage)):
+        ex = Exception("The size of time and voltage is not equal")
+        raise ex
+    # Write header
+    with open(output_filename, 'w') as file_object:
+        file_object.write("scaled_time{0}scaled_voltage\n".format(sep))
+        i = 0
+        while (i < length_of_voltage):
+            file_object.write("{0}{1}{2}{3}".format(
+                str(array_time[i]), sep, str(array_voltage[i]),  "\n"))
+            i = i + 1
