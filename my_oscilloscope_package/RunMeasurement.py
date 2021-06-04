@@ -6,7 +6,7 @@
 # Usage: Use it to generate scripts for OpenChoice Talker Listener
 # TODO
 # Add oscilloscope setup for SiPM and PMT
-# Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --outputdir output_dir
+# Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir
 import argparse
 import time
 

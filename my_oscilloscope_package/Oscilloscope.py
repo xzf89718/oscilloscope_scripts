@@ -167,6 +167,7 @@ class Oscilloscope():
             # self._channel = "DEFAULT"
             # print("The select channel should be one of CH1, CH2, CH3, CH4\nSet DEFUALT")
             ex = Exception("Oscilloscope::ERROR Sampling channl not exist. Example:CH1,CH2,CH3,CH4")
+            raise ex
 
     def Autoset(self):
         self.inst.write('autoset EXECUTE')

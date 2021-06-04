@@ -56,13 +56,13 @@ for channel in save_channels.split(","):
     dic_arrays["{0}_time".format(channel)] = np.zeros(
         n_max_points, dtype=float)
     dic_arrays["{0}_voltage".format(channel)] = np.zeros(
-        n_max_points, dtype=int)
+        n_max_points, dtype=float)
     dic_trees[channel].Branch("size".format(
         channel), dic_arrays["{0}_size".format(channel)], "size/I".format(channel))
     dic_trees[channel].Branch("time".format(channel), dic_arrays["{0}_time".format(
         channel)], "time[{1}]/D".format(channel, str(n_max_points)))
     dic_trees[channel].Branch("voltage".format(
-        channel), dic_arrays["{0}_voltage".format(channel)], "voltage[{1}]/I".format(channel, str(n_max_points)))
+        channel), dic_arrays["{0}_voltage".format(channel)], "voltage[{1}]/D".format(channel, str(n_max_points)))
 for channel in save_channels.split(","):
     dic_trees[channel].Print()
     dic_trees[channel].Show()
