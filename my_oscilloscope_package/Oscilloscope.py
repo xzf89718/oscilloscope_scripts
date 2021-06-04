@@ -3,14 +3,11 @@
 # Email: zifeng.xu@cern.ch
 # Note:1, How to detect muon decay events in our lab?
 #      2, Only sample the channel you already setup
-import argparse
-from typing import ChainMap
 import pyvisa
 import time
 
 import numpy as np
 import matplotlib.pyplot as plt
-from pyvisa.constants import DataWidth
 
 
 class Oscilloscope():
