@@ -8,7 +8,7 @@ import argparse
 
 import ROOT as R
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 
 parser = argparse.ArgumentParser(
@@ -72,14 +72,14 @@ for n_waveform in range(0, n_save_waveforms):
     for channel in save_channels.split(","):
         # Use pandas to open the file
         df_inputfile = pd.read_csv("{0}{1}-{2}-{3}.csv".format(
-            input_dir, input_file_name, channel, str(n_waveform)), sep=",", header=None, usecols=used_colums)
+            input_dir, input_file_name, channel, str(n_waveform)), sep=",")
         # print("DEBUG {0}".format(str(df_inputfile)))
         # print(df_inputfile)
         # TODO: check if NaN exist in the file, if exist ,warning and change the Nan to 0.0
         i = 0
         # Save max to n_max_points points, or just the len(df_inputfile[used_colums[0]])points
-        if(len(df_inputfile[used_colums[0]]) <= n_max_points):
-            length_to_save = len(df_inputfile[used_colums[0]])
+        if(len(df_inputfile['scaled_time']) <= n_max_points):
+            length_to_save = len(df_inputfile['scaled_time'])
         else:
             print("WARNING The lenght of colums in data is larger than the n_max_points, you may miss some data points now!")
             length_to_save = n_max_points
@@ -88,9 +88,9 @@ for n_waveform in range(0, n_save_waveforms):
         # Copy the data one by one to the
         while i < length_to_save:
             dic_arrays["{0}_time".format(
-                channel)][i] = df_inputfile[used_colums[0]][i]
+                channel)][i] = df_inputfile['scaled_time'][i]
             dic_arrays["{0}_voltage".format(
-                channel)][i] = df_inputfile[used_colums[1]][i]
+                channel)][i] = df_inputfile['scaled_voltage'][i]
             i = i+1
         # print("DEBUG ",end="")
         # print(dic_arrays["{0}_time".format(
