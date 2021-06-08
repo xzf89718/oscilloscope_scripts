@@ -19,6 +19,7 @@ class Oscilloscope():
     """
 
     def __init__(self, resource_name='USB0::0x0699::0x03C7::C011248::INSTR'):
+        print("Osilloscope::INFO instrumente name: {0}".format(resource_name))
         # enable libvisa support. Only available on Mac and Windows
         self.resource_manager = pyvisa.ResourceManager()
         # enable full python pyvisa

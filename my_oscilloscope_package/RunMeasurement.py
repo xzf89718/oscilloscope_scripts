@@ -25,6 +25,12 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
     plt.ylabel('voltage')
     plt.show()
 
+
+print("Here are instruments you have:")
+resource_manager=pyvisa.ResourceManager()
+inst_name = resource_manager.list_resources()
+print("{0}".format(inst_name))
+
 if not(__name__ == "__main__"):
     try:
         # Interactive mode
@@ -64,14 +70,13 @@ if __name__ == "__main__":
     print("****************************************************************************************")
     print("****************************************************************************************")
     print("****************************************************************************************")
-
+    begin_time = time.time()
     # Initialize Oscilloscope
     Scope = Oscilloscope()
     # Loop from 0 to n_save_waveforms, save all wave form
     for i_waveform in range(0, n_save_waveforms):
 
         for _channel in save_channels:
-            # print('Hello, wolrd!')
             # Autoset, you wont want this in our measurement!
             # Scope.Autoset()
             wavetime, waveform = Scope.Sampling("CH1,CH2")
@@ -80,6 +85,18 @@ if __name__ == "__main__":
                        str(i_waveform), output_dir), wavetime[_channel], waveform[_channel])
             # plt.plot(wavetime,waveform)
             # plt.show()
-            time.sleep(0.5)
+            # time.sleep(0.5)
 
+        if_mod_zero = i_waveform % (n_save_waveforms / 10)
+        if (if_mod_zero == 0):
+            percentage_of_job = int(i_waveform / n_save_waveforms)
+            print(
+                "**************{0}0% job is processed.***************".format(percentage_of_job))
     Scope.Close()
+    end_time = time.time()
+    event_rate = float(n_save_waveforms) / (end_time - begin_time)
+    print("***************************")
+    print("***************************")
+    print("**   Event rate: {0}Hz   **".format(event_rate))
+    print("***************************")
+    print("***************************")
