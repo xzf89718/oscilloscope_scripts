@@ -6,3 +6,4 @@
 *.root
 *.csv
 *.pyc
+/my_oscilloscope_package/__pycache__/*
