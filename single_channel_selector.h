@@ -28,7 +28,7 @@ public:
    // Readers to access the data (delete the ones you do not need).
    TTreeReaderValue<Int_t> size = {fReader, "size"};
    TTreeReaderArray<Double_t> time = {fReader, "time"};
-   TTreeReaderArray<Int_t> voltage = {fReader, "voltage"};
+   TTreeReaderArray<Double_t> voltage = {fReader, "voltage"};
 
    single_channel_selector(TTree * /*tree*/ = 0) {}
    virtual ~single_channel_selector() {}

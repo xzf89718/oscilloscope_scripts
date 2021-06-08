@@ -39,11 +39,11 @@ void single_channel_selector::Begin(TTree * /*tree*/)
 
    TString option = GetOption();
    auto output_filename=option;
-   if(option.size() == 0){
-      output_filename="default.root";
-   }
-   // Initialize output file
-   m_output_file = TFile::Open(output_filename.c_str(), "RECREATE");
+   // if(option.size() == 0){
+   //    output_filename="default.root";
+   // }
+   // // Initialize output file
+   m_output_file = TFile::Open(output_filename, "RECREATE");
    // Initialize TTree
    m_tree_max_voltage = new TTree("max_voltage", "max_voltage");
    m_tree_max_voltage->Branch("max_voltage", &m_max_voltage, "max_voltage/D");

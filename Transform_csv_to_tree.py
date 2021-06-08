@@ -26,7 +26,7 @@ parser.add_argument("--save_channels", type=str, default="CH1,CH2",
                     help="Which channel should we save in the scripts? Example: CH1,CH2")
 parser.add_argument("--n_max_points", type=int, default=2000,
                     help="Max save points for one saved waveform")
-parser.add_argument("--used_colums", type=str, default="1,2", help="Which ")
+# parser.add_argument("--used_colums", type=str, default="1,2", help="Which ")
 args = parser.parse_args()
 print("All parameters get from commandline are:")
 print(args)
@@ -37,7 +37,7 @@ input_file_name = args.input_file_name
 n_save_waveforms = args.n_save_waveforms
 save_channels = args.save_channels
 n_max_points = args.n_max_points
-used_colums = args.used_colums
+# used_colums = args.used_colums
 
 colums = used_colums.split(",")
 used_colums = []
