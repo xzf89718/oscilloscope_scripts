@@ -38,17 +38,18 @@ void single_channel_selector::Begin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    TString option = GetOption();
-   auto output_filename=option;
+   auto output_filename = option;
    // if(option.size() == 0){
    //    output_filename="default.root";
    // }
    // // Initialize output file
    m_output_file = TFile::Open(output_filename, "RECREATE");
    // Initialize TTree
-   m_tree_max_voltage = new TTree("max_voltage", "max_voltage");
-   m_tree_max_voltage->Branch("max_voltage", &m_max_voltage, "max_voltage/D");
-   m_tree_charge = new TTree("charge", "charge");
-   m_tree_charge->Branch("charge", &m_charge, "charge/D");
+   m_tree_event = new TTree("event", "event");
+   m_tree_event->Branch("max_voltage", &m_max_voltage, "max_voltage/D");
+   m_tree_event->Branch("charge", &m_charge, "charge/D");
+   m_tree_event->Branch("trig_charge", &m_trig_charge, "trig_charge/I");
+   m_tree_event->Branch("trig_level", &m_trig_level, "trig_level/I");
 }
 
 void single_channel_selector::SlaveBegin(TTree * /*tree*/)
@@ -85,10 +86,13 @@ Bool_t single_channel_selector::Process(Long64_t entry)
       std::clog << "single_channel_selector::ERROR size of channel == 0; exit!" << std::endl;
       return kFALSE;
    }
-   m_max_voltage=GetMinimumValue();
-   m_charge=GetCharge();
-   m_tree_max_voltage->Fill();
-   m_tree_charge->Fill();
+   m_max_voltage = GetMinimumValue();
+   m_charge = GetCharge();
+
+   m_trig_charge = Pass_trigger_charge();
+   m_trig_level = Pass_trigger_level();
+   m_tree_event->Fill();
+   m_tree_event->Fill();
 
    return kTRUE;
 }
@@ -106,8 +110,32 @@ void single_channel_selector::Terminate()
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
 
-   m_tree_charge->Write();
-   m_tree_max_voltage->Write();
+   m_tree_event->Write();
+}
+
+Int_t single_channel_selector::Pass_trigger_charge()
+{
+
+   if (m_charge <= -300)
+   {
+      return 0;
+   }
+   else
+   {
+      return 1;
+   }
+}
+
+Int_t single_channel_selector::Pass_trigger_level()
+{
+   if (m_max_voltage <= -4.0)
+   {
+      return 0;
+   }
+   else
+   {
+      return 1;
+   }
 }
 
 Double_t single_channel_selector::GetMinimumValue()

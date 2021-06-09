@@ -50,14 +50,17 @@ public:
 
 private:
    TFile *m_output_file;
-   TTree *m_tree_max_voltage;
-   TTree *m_tree_charge;
+   TTree *m_tree_event;
 
    Double_t m_max_voltage;
    Double_t m_charge;
+   Int_t m_trig_charge;
+   Int_t m_trig_level;
 
    Double_t GetMinimumValue();
    Double_t GetCharge();
+   Int_t Pass_trigger_charge();
+   Int_t Pass_trigger_level();
 };
 
 #endif

@@ -31,7 +31,7 @@ def RunAnalysis(channels='CH1,CH2,CH3', input_filename='output_filename', min_tr
 
     return 0
 
-input_TFile=ROOT.TFile.Open("channel1_trig_n4p00.root", "READ")
+input_TFile=ROOT.TFile.Open("./waveform_data_root/channel1_trig_n4p00.root", "READ")
 
 RunSelector(input_TFile, "CH1,CH2,CH3", output_filename='channel1_trig_n4p00')
 # RunAnalysis(channels='CH1,CH2', input_filename='output_filename')

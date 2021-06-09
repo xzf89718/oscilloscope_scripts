@@ -9,4 +9,4 @@
 *.pcm
 *.d
 *.so
-/my_oscilloscope_package/__pycache__/*
+my_oscilloscope_package/__pycache__/*
