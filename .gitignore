@@ -6,3 +6,6 @@
 *.root
 *.csv
 *.pyc
+*.pcm
+*.d
+*.so
