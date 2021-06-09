@@ -25,9 +25,16 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
     plt.ylabel('voltage')
     plt.show()
 
+def Software_trigger(dic_scaled_time, dic_scaled_voltage):
+    """
+    User software trigger
+    """
+
+    # Pass tirgger
+    return True
 
 print("Here are instruments you have:")
-resource_manager=pyvisa.ResourceManager()
+resource_manager = pyvisa.ResourceManager()
 inst_name = resource_manager.list_resources()
 print("{0}".format(inst_name))
 
@@ -59,7 +66,7 @@ if __name__ == "__main__":
 
     output_filename = args.output_filename
     n_save_waveforms = args.n_save_waveforms
-    save_channels = args.save_channels.split(',')
+    save_channels = args.save_channels
     output_dir = args.output_dir
     # oscilloscope_setup_scripts = args.oscilloscope_setup_scripts
 
@@ -75,12 +82,13 @@ if __name__ == "__main__":
     Scope = Oscilloscope()
     # Loop from 0 to n_save_waveforms, save all wave form
     for i_waveform in range(0, n_save_waveforms):
-
-        for _channel in save_channels:
-            # Autoset, you wont want this in our measurement!
-            # Scope.Autoset()
-            wavetime, waveform = Scope.Sampling("CH1,CH2")
-            print("time: {0}\nwaveform: {1}".format(wavetime, waveform))
+        # Autoset, you wont want this in our measurement!
+        # Scope.Autoset()
+        wavetime, waveform = Scope.Sampling(save_channels)
+        while (not Software_trigger(wavetime, waveform)):
+            wavetime, waveform = Scope.Sampling(save_channels)
+        print("time: {0}\nwaveform: {1}".format(wavetime, waveform))
+        for _channel in save_channels.split(","):
             WriteToCsv("{3}/{0}-{1}-{2}.csv".format(output_filename, _channel,
                        str(i_waveform), output_dir), wavetime[_channel], waveform[_channel])
             # plt.plot(wavetime,waveform)
@@ -89,14 +97,14 @@ if __name__ == "__main__":
 
         if_mod_zero = i_waveform % (n_save_waveforms / 10)
         if (if_mod_zero == 0):
-            percentage_of_job = int(i_waveform / n_save_waveforms)
+            percentage_of_job = float(i_waveform) / float(n_save_waveforms)
             print(
-                "**************{0}0% job is processed.***************".format(percentage_of_job))
+                "**************{0:.1f}% job is processed.***************".format(percentage_of_job*100))
     Scope.Close()
     end_time = time.time()
     event_rate = float(n_save_waveforms) / (end_time - begin_time)
     print("***************************")
     print("***************************")
-    print("**   Event rate: {0}Hz   **".format(event_rate))
+    print("**   Event rate: {0:.2f}Hz  **".format(event_rate))
     print("***************************")
     print("***************************")
