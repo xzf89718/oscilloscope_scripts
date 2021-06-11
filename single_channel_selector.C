@@ -86,12 +86,13 @@ Bool_t single_channel_selector::Process(Long64_t entry)
       std::clog << "single_channel_selector::ERROR size of channel == 0; exit!" << std::endl;
       return kFALSE;
    }
+
    m_max_voltage = GetMinimumValue();
    m_charge = GetCharge();
 
    m_trig_charge = Pass_trigger_charge();
    m_trig_level = Pass_trigger_level();
-   m_tree_event->Fill();
+
    m_tree_event->Fill();
 
    return kTRUE;
@@ -128,7 +129,7 @@ Int_t single_channel_selector::Pass_trigger_charge()
 
 Int_t single_channel_selector::Pass_trigger_level()
 {
-   if (m_max_voltage <= -4.0)
+   if (m_max_voltage <= -2.68)
    {
       return 0;
    }
@@ -143,7 +144,7 @@ Double_t single_channel_selector::GetMinimumValue()
 
    Double_t minimum_value;
    minimum_value = voltage[0];
-   for (auto i = 0; i < (*size); i++)
+   for (auto i = 999; i < (*size); i++)
    {
       if (voltage[i] < minimum_value)
       {

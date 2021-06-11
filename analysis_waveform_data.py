@@ -3,7 +3,13 @@
 # Email: zifeng.xu@cern.ch
 # Usage: Use this interface to get charge and max voltage in waveform
 
+
+import argparse
+import sys
+
 import numpy as np
+# import matplotlib
+# matplotlib.use('TkAgg')
 # import matplotlib.pyplot as plt
 import ROOT
 
@@ -22,16 +28,21 @@ def RunSelector(input_TFile, channels='CH1,CH2,CH3', output_filename='output_fil
 
 def RunAnalysis(channels='CH1,CH2,CH3', input_filename='output_filename', min_trig_level_cut=0.0):
 
+    dic_TFile = {}
     dic_tree = {}
-    try:
-        ROOT.TFile.Open("".format())
-    except:
-        print("hello")
+    list_channels = channels.split(',')
+    for _channel in list_channels:
+
+        try:
+            ROOT.TFile.Open("{0}_{1}.root".format(input_filename, _channel))
+        except:
+            print("{0}_{1}.root".format(input_filename, _channel))
+
     # Check the length of these trees
 
     return 0
 
-input_TFile=ROOT.TFile.Open("./waveform_data_root/channel1_trig_n4p00.root", "READ")
-
-RunSelector(input_TFile, "CH1,CH2,CH3", output_filename='channel1_trig_n4p00')
+ 
+input_TFile=ROOT.TFile.Open("./waveform_data_root/channel1_trig_n3p60_all.root", "READ")
+RunSelector(input_TFile, "CH1,CH2,CH3", output_filename='channel1_trig_n3p60_cut_charge_n300_level_n2p68')
 # RunAnalysis(channels='CH1,CH2', input_filename='output_filename')
