@@ -29,26 +29,29 @@
 #include "TH1F.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "TMath.h"
 #include <iostream>
-
+//using std::vector;
+//using std::string;
 void single_channel_selector::Begin(TTree * /*tree*/)
 {
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
+   m_baseline_voltage = -2.5;
    TString option = GetOption();
-   auto output_filename = option;
-   // if(option.size() == 0){
-   //    output_filename="default.root";
-   // }
+   TString output_filename = option;
+
    // // Initialize output file
    m_output_file = TFile::Open(output_filename, "RECREATE");
    // Initialize TTree
    m_tree_event = new TTree("event", "event");
    m_tree_event->Branch("max_voltage", &m_max_voltage, "max_voltage/D");
+   m_tree_event->Branch("width", &m_width, "width/I");
    m_tree_event->Branch("charge", &m_charge, "charge/D");
    m_tree_event->Branch("trig_charge", &m_trig_charge, "trig_charge/I");
+   m_tree_event->Branch("pass_width", &m_pass_width, "pass_width/I");
    m_tree_event->Branch("trig_level", &m_trig_level, "trig_level/I");
 }
 
@@ -88,9 +91,11 @@ Bool_t single_channel_selector::Process(Long64_t entry)
    }
 
    m_max_voltage = GetMinimumValue();
+   m_width = GetWidth();
    m_charge = GetCharge();
 
    m_trig_charge = Pass_trigger_charge();
+   m_pass_width = Pass_width();
    m_trig_level = Pass_trigger_level();
 
    m_tree_event->Fill();
@@ -114,10 +119,21 @@ void single_channel_selector::Terminate()
    m_tree_event->Write();
 }
 
+Int_t single_channel_selector::Pass_width()
+{
+   if (m_width <= 10)
+   {
+      return 0;
+   }
+   else
+   {
+      return 1;
+   }
+}
 Int_t single_channel_selector::Pass_trigger_charge()
 {
 
-   if (m_charge <= -300)
+   if (m_charge <= -4400)
    {
       return 0;
    }
@@ -144,7 +160,8 @@ Double_t single_channel_selector::GetMinimumValue()
 
    Double_t minimum_value;
    minimum_value = voltage[0];
-   for (auto i = 999; i < (*size); i++)
+   //for (auto i = 999; i < (*size); i++)
+   for (auto i = 899; i < 1200; i++)
    {
       if (voltage[i] < minimum_value)
       {
@@ -153,6 +170,21 @@ Double_t single_channel_selector::GetMinimumValue()
    }
 
    return minimum_value;
+}
+
+Int_t single_channel_selector::GetWidth()
+{
+   Int_t width = 0;
+   Double_t max_amplitude = m_baseline_voltage - m_max_voltage;
+   for (auto i = 899; i < 1200; i++)
+   {
+      if ((m_baseline_voltage - voltage[i]) < (max_amplitude / (1.4142136)))
+      {
+         width = width + 1;
+      }
+   }
+
+   return width;
 }
 
 Double_t single_channel_selector::GetCharge()

@@ -18,7 +18,8 @@
 #include "TTree.h"
 
 // Headers needed by this particular selector
-
+//using std::string;
+//using std::vector;
 class single_channel_selector : public TSelector
 {
 public:
@@ -52,14 +53,20 @@ private:
    TFile *m_output_file;
    TTree *m_tree_event;
 
+   Double_t m_baseline_voltage;
    Double_t m_max_voltage;
+   Int_t m_width;
    Double_t m_charge;
    Int_t m_trig_charge;
+   Int_t m_pass_width;
    Int_t m_trig_level;
 
    Double_t GetMinimumValue();
    Double_t GetCharge();
+   Int_t GetWidth();
+
    Int_t Pass_trigger_charge();
+   Int_t Pass_width();
    Int_t Pass_trigger_level();
 };
 

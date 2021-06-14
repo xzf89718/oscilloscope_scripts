@@ -21,6 +21,7 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
     wavetime, waveform = inst.Sampling(list_channels)
     for channel in list_channels.split(","):
         plt.plot(wavetime[channel], waveform[channel])
+        print(len(waveform[channel]))
     plt.xlabel('time')
     plt.ylabel('voltage')
     plt.show()
@@ -43,7 +44,7 @@ if not(__name__ == "__main__"):
         # Interactive mode
         Scope = Oscilloscope()
         print("Interactive mode")
-        print("Use command SampleOnce(Scope,\"CH1,CH2\")")
+        print("Use command SampleOnce(Scope,\"CH1,CH2,CH3\")")
     except:
         print("Check connection between oscilloscope and computer")
 

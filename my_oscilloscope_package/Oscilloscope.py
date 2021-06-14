@@ -63,8 +63,7 @@ class Oscilloscope():
             # data query
             # send message in binary form
             bin_wave = self.inst.query_binary_values(
-                'curve?', datatype='b', container=np.array)
-
+                'curve?', data_points=2000, header_fmt='empty',datatype='b', container=np.array)
             # retrieve scaling factors
             wfm_record = int(self.inst.query('wfmoutpre:nr_pt?'))
             pre_trig_record = int(self.inst.query('wfmoutpre:pt_off?'))
