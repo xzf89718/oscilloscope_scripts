@@ -29,7 +29,7 @@ class Oscilloscope():
         self.inst.timeout = 10000  # ms
         self.inst.encoding = 'latin_1'
         self.inst.read_termination = '\n'
-        self.inst.write_termination = '\n'
+        self.inst.write_termination = None
         self._channel = 'DEFAULT'
         self.inst.write('*cls')  # clear ESR
         self.inst.write('header OFF')  # disable attribute echo in replies
@@ -52,6 +52,10 @@ class Oscilloscope():
         # curve configuration
         self.inst.write('data:encdg SRIBINARY')  # signed integer
         acq_record = int(M)  # self.inst.query('horizontal:recordlength?')
+        # 2021/06/14 Zifeng edit, This is a very importrant bug! You must specified the start point of the query!
+        # For TBS2000B, 1 to 2500 means a full waveform!
+        # If you dont specified, a random start will applied, what is not you want exactly.
+        self.inst.write('data:start 1')
         self.inst.write('data:stop {0}'.format(acq_record))
         self.inst.write('wfmoutpre:byt_nr 1')  # 1 byte per sample
 
@@ -63,7 +67,7 @@ class Oscilloscope():
             # data query
             # send message in binary form
             bin_wave = self.inst.query_binary_values(
-                'curve?', data_points=2000, header_fmt='empty',datatype='b', container=np.array)
+                'curve?', datatype='b', container=np.array)
             # retrieve scaling factors
             wfm_record = int(self.inst.query('wfmoutpre:nr_pt?'))
             pre_trig_record = int(self.inst.query('wfmoutpre:pt_off?'))
