@@ -36,8 +36,10 @@ h_max_voltage_sig = ROOT.TH1F("max_voltage_sig", "max_voltage_sig", len(
     max_voltage_binx)-1, max_voltage_binx)
 h_max_voltage_bkg = ROOT.TH1F("max_voltage_bkg", "max_voltage_bkg", len(
     max_voltage_binx)-1, max_voltage_binx)
-dic_hist['bkg']={'charge':h_charge_bkg,'width':h_width_bkg,'max_voltage':h_max_voltage_bkg}
-dic_hist['sig']={'charge':h_charge_sig,'width':h_width_sig,'max_voltage':h_max_voltage_sig}
+dic_hist['bkg'] = {'charge': h_charge_bkg,
+                   'width': h_width_bkg, 'max_voltage': h_max_voltage_bkg}
+dic_hist['sig'] = {'charge': h_charge_sig,
+                   'width': h_width_sig, 'max_voltage': h_max_voltage_sig}
 # Use Maximum Likelihood estimate parameters
 # Just fill the histogram first
 for i in range(0, train_set):
@@ -45,7 +47,7 @@ for i in range(0, train_set):
     event_CH3.m_tree_event.GetEntry(i)
 
     # If sig
-    if(event_CH3.trig_level[0] == 0):            
+    if(event_CH3.trig_level[0] == 0):
         h_charge_sig.Fill(event_CH3.charge[0])
         h_width_sig.Fill(event_CH3.width[0])
         h_max_voltage_sig.Fill(event_CH3.max_voltage[0])
@@ -55,8 +57,10 @@ for i in range(0, train_set):
         h_width_bkg.Fill(event_CH3.width[0])
         h_max_voltage_bkg.Fill(event_CH3.max_voltage[0])
 
-dic_canvas={'bkg':['charge','width','max_voltage'],'sig':['charge','width','max_voltage']}
+dic_canvas = {'bkg': ['charge', 'width', 'max_voltage'],
+              'sig': ['charge', 'width', 'max_voltage']}
 for key in dic_canvas.keys():
     for variable in dic_canvas[key]:
-        _canvas=ROOT.TCanvas("{0}_{1}".format(key,variable),"{0}_{1}".format(key,variable).format,800,600)
+        _canvas = ROOT.TCanvas("{0}_{1}".format(
+            key, variable), "{0}_{1}".format(key, variable).format, 800, 600)
         dic_hist[key][variable].Draw("hist e")
