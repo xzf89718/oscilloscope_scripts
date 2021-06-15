@@ -7,7 +7,7 @@ import ROOT
 import numpy as np
 # import matplotlib.pyplot as plt
 from Event import Event as ev
-
+import os
 
 train_set = 7000
 test_set = 3000
@@ -58,5 +58,7 @@ for i in range(0, train_set):
 dic_canvas={'bkg':['charge','width','max_voltage'],'sig':['charge','width','max_voltage']}
 for key in dic_canvas.keys():
     for variable in dic_canvas[key]:
-        _canvas=ROOT.TCanvas("{0}_{1}".format(key,variable),"{0}_{1}".format(key,variable).format,800,600)
+        _canvas=ROOT.TCanvas("{0}_{1}".format(key,variable),"{0}_{1}".format(key,variable),800,600)
         dic_hist[key][variable].Draw("hist e")
+        ROOT.gPad.Update()
+        _canvas.SaveAs("{0}_{1}.png".format(key,variable))
