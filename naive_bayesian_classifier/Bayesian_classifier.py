@@ -20,7 +20,7 @@ event_CH3 = ev('../channel2_trig_n3p00_cut_charge_n4400_level_n2p68_CH3.root')
 
 
 charge_bin_x = np.array([-4950., -4860., -4845., -4800])
-width_binx = np.array([274, 294, 300, 303])
+width_binx = np.array([274., 294., 300., 303.])
 max_voltage_binx = np.array([-5.5, -2.6, -2.3])
 dic_hist = {}
 # Train
