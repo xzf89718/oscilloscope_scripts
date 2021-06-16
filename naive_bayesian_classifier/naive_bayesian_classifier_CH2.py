@@ -45,7 +45,7 @@ dic_hist['sig'] = {'charge': h_charge_sig,
                    'width': h_width_sig}
 # Use Maximum Likelihood estimate parameters
 # Just fill the histogram first
-for i in range(6999, 10000):
+for i in range(0, train_set):
     # GetEntry
     event_CH1.m_tree_event.GetEntry(i)
     event_CH2.m_tree_event.GetEntry(i)
@@ -61,15 +61,15 @@ for i in range(6999, 10000):
         h_charge_bkg.Fill(event_CH3.charge[0])
         h_width_bkg.Fill(event_CH3.width[0])
         # h_max_voltage_bkg.Fill(event_CH3.max_voltage[0])
-# Plot here
-# dic_canvas = {'bkg': ['charge', 'width'],
-#               'sig': ['charge', 'width']}
+
+# dic_canvas = {'bkg': ['charge', 'width', 'max_voltage'],
+#               'sig': ['charge', 'width', 'max_voltage']}
 # for key in dic_canvas.keys():
 #     for variable in dic_canvas[key]:
-#         _canvas=ROOT.TCanvas("test_{0}_{1}".format(key,variable),"{0}_{1}".format(key,variable),800,600)
+#         _canvas=ROOT.TCanvas("train_{0}_{1}".format(key,variable),"{0}_{1}".format(key,variable),800,600)
 #         dic_hist[key][variable].Draw("hist e")
 #         ROOT.gPad.Update()
-#         _canvas.SaveAs("test_{0}_{1}.png".format(key,variable))
+#         _canvas.SaveAs("train_{0}_{1}.png".format(key,variable))
 
 # estimate prior probability
 dic_prior = {}
