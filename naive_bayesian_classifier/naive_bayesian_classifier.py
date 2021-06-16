@@ -10,7 +10,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle("ATLAS")
 # import matplotlib.pyplot as plt
 
-LAMBDA = 0.0
+LAMBDA = 1.0
 train_set = 7000
 test_set = 3000
 # Init all event we need
@@ -95,14 +95,17 @@ print(dic_prior)
 print("/**************condition posibillity****************/")
 print(dic_condi_pro)
 
+h_sig_and_bkg_train_set=ROOT.TH1I("h_sig_and_bkg_train_set","h_sig_and_bkg_train_set",2,0,2)
+h_sig_and_bkg_train_set_predict=ROOT.TH1I("h_sig_and_bkg_train_set_predict","h_sig_and_bkg_train_set_predict",2,0,2)
 dic_posterior_train_set = {'bkg': [], 'sig': []}
 # Now calculate the predict result of train dateset
 # for i in range(0, train_set + test_set):
-for i in range(0, train_set + test_set):
+for i in range(0, train_set):
     # GetEntry
     event_CH1.m_tree_event.GetEntry(i)
     event_CH2.m_tree_event.GetEntry(i)
     event_CH3.m_tree_event.GetEntry(i)
+    h_sig_and_bkg_train_set.Fill(event_CH3.trig_level[0])
     dic_posterior = {'bkg': None, 'sig': None}
     for key in dic_hist:
         i_bin_charge = dic_hist[key]['charge'].FindBin(event_CH3.charge[0])
@@ -117,9 +120,64 @@ for i in range(0, train_set + test_set):
             condi_pro_width * condi_pro_max_voltage
     dic_posterior_train_set['sig'].append(dic_posterior['sig'])
     dic_posterior_train_set['bkg'].append(dic_posterior['bkg'])
+    if(dic_posterior['sig'] >= dic_posterior['bkg'] and event_CH3.trig_level[0] == 0):
+        h_sig_and_bkg_train_set_predict.Fill(0)
+    elif (dic_posterior['sig'] < dic_posterior['bkg'] and event_CH3.trig_level[0] == 1):
+        h_sig_and_bkg_train_set_predict.Fill(1)
 
-print("/**************posterior posibbility****************/")
+
+print("/**************posterior posibbility for train set****************/")
 for i in range(0, len(dic_posterior_train_set['bkg'])):
-    print("bkg: {0:.3f}, sig: {1:.3f}".format(
+    print("bkg: {0:f}, sig: {1:f}".format(
         dic_posterior_train_set['bkg'][i], dic_posterior_train_set['sig'][i]))
+print("truth sig: {0}".format(h_sig_and_bkg_train_set.GetBinContent(1)))
+print("truth bkg:{0}".format(h_sig_and_bkg_train_set.GetBinContent(2)))
+print("pred sig: {0}".format(h_sig_and_bkg_train_set_predict.GetBinContent(1)))
+print("pred bkg:{0}".format(h_sig_and_bkg_train_set_predict.GetBinContent(2)))
+
+
+h_sig_and_bkg_test_set=ROOT.TH1I("h_sig_and_bkg_test_set","h_sig_and_bkg_test_set",2,0,2)
+h_sig_and_bkg_test_set_predict=ROOT.TH1I("h_sig_and_bkg_test_set_predict","h_sig_and_bkg_test_set_predict",2,0,2)
+dic_posterior_test_set = {'bkg': [], 'sig': []}
+# Now calculate the predict result of train dateset
+# for i in range(0, train_set + test_set):
+for i in range(train_set, train_set + test_set):
+    # GetEntry
+    event_CH1.m_tree_event.GetEntry(i)
+    event_CH2.m_tree_event.GetEntry(i)
+    event_CH3.m_tree_event.GetEntry(i)
+    h_sig_and_bkg_test_set.Fill(event_CH3.trig_level[0])
+    dic_posterior = {'bkg': None, 'sig': None}
+    for key in dic_hist:
+        i_bin_charge = dic_hist[key]['charge'].FindBin(event_CH3.charge[0])
+        i_bin_width = dic_hist[key]['width'].FindBin(event_CH3.width[0])
+        i_bin_max_voltage = dic_hist[key]['max_voltage'].FindBin(
+            event_CH3.max_voltage[0])
+        condi_pro_charge = dic_condi_pro[key]['charge'][i_bin_charge]
+        condi_pro_width = dic_condi_pro[key]['width'][i_bin_width]
+        condi_pro_max_voltage = dic_condi_pro[key]['max_voltage'][i_bin_max_voltage]
+        # calculate posterior
+        dic_posterior[key] = dic_prior[key] * condi_pro_charge * \
+            condi_pro_width * condi_pro_max_voltage
+    dic_posterior_test_set['sig'].append(dic_posterior['sig'])
+    dic_posterior_test_set['bkg'].append(dic_posterior['bkg'])
+    if(dic_posterior['sig'] >= dic_posterior['bkg'] and event_CH3.trig_level[0] == 0):
+        h_sig_and_bkg_test_set_predict.Fill(0)
+    elif (dic_posterior['sig'] < dic_posterior['bkg'] and event_CH3.trig_level[0] == 1):
+        h_sig_and_bkg_test_set_predict.Fill(1)
+
+
+print("/**************posterior posibbility for test set****************/")
+for i in range(0, len(dic_posterior_test_set['bkg'])):
+    print("bkg: {0:f}, sig: {1:f}".format(
+        dic_posterior_test_set['bkg'][i], dic_posterior_test_set['sig'][i]))
+print("truth sig: {0}".format(h_sig_and_bkg_test_set.GetBinContent(1)))
+print("truth bkg:{0}".format(h_sig_and_bkg_test_set.GetBinContent(2)))
+print("pred sig: {0}".format(h_sig_and_bkg_test_set_predict.GetBinContent(1)))
+print("pred bkg:{0}".format(h_sig_and_bkg_test_set_predict.GetBinContent(2)))
+
+
+
+
 # Calculate
+ 

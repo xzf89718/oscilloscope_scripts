@@ -11,3 +11,4 @@
 *.so
 my_oscilloscope_package/__pycache__/*
 *ACLiC*
+*.log
