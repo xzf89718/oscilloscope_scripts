@@ -2,11 +2,10 @@
 
 # Author: Zifeng XU
 # Email: zifeng.xu@cern.ch
-# Proposal: save oscilloscope
-# Usage: Use it to generate scripts for OpenChoice Talker Listener
-# TODO
-# Add oscilloscope setup for SiPM and PMT
+# Usage: provide interafate to save waveform data from Tek TBS2000B oscilloscope
+# Make sure you have output_dir, make sure the save_channels is enable in oscilloscope
 # Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir
+# Output filename for example will be this_is_an_example-CH1.csv in output_dir
 import argparse
 import time
 
@@ -24,7 +23,10 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
         print(len(waveform[channel]))
     plt.xlabel('time')
     plt.ylabel('voltage')
+    plt.savefig('sample_once_{channels}'.format(
+        channels=list_channels.replace(',', '_')))
     plt.show()
+
 
 def Software_trigger(dic_scaled_time, dic_scaled_voltage):
     """
@@ -33,6 +35,7 @@ def Software_trigger(dic_scaled_time, dic_scaled_voltage):
 
     # Pass tirgger
     return True
+
 
 print("Here are instruments you have:")
 resource_manager = pyvisa.ResourceManager()
@@ -44,7 +47,7 @@ if not(__name__ == "__main__"):
         # Interactive mode
         Scope = Oscilloscope()
         print("Interactive mode")
-        print("Use command SampleOnce(Scope,\"CH1,CH2,CH3\")")
+        print("Use command SampleOnce(RunMeasurement.Scope,\"CH1,CH2,CH3\")")
     except:
         print("Check connection between oscilloscope and computer")
 
@@ -104,8 +107,8 @@ if __name__ == "__main__":
     Scope.Close()
     end_time = time.time()
     event_rate = float(n_save_waveforms) / (end_time - begin_time)
-    print("***************************")
-    print("***************************")
-    print("**   Event rate: {0:.2f}Hz  **".format(event_rate))
-    print("***************************")
-    print("***************************")
+    print("****************************")
+    print("****************************")
+    print("**  Event rate: {0:.2f}Hz **".format(event_rate))
+    print("****************************")
+    print("****************************")

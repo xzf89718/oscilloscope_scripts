@@ -2,6 +2,7 @@
 # Author: Zifeng Xu
 # email: zifeng.xu@cern.ch
 # Usage: Use this scripts to transform different channels with many output to one TTree
+# Example: python Transform_csv_to_tree.py this_is_an_example.root input_dir input_file_name this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --n_max_points 2000
 # Use pandas to readcsv file, and them use pyroot to write a tree
 
 import argparse

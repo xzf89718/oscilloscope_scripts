@@ -2,7 +2,7 @@
 # Author: Zifeng Xu
 # Email: zifeng.xu@cern.ch
 # Usage: Use this script to draw charge and max voltage in waveform
-
+# Example: python Plot_waveform_from_root.py this_is_an_example.root --n_plot_waveforms 10 --plot_channels CH1,CH2,CH3 --save_names this_is_an_example
 import argparse
 import matplotlib.pyplot as plt
 import ROOT
@@ -54,6 +54,7 @@ class Tree_waveform():
                 label=_channel)
         plt.legend()
         plt.savefig(save_name)
+        plt.close()
         # plt.show()
 
 

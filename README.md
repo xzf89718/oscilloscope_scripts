@@ -23,18 +23,17 @@ pip install -U virtualenv
 virtualenv -p 3.8 ~/pyvisa_3d8  
 // On Ubuntu  
 // source ~/pyvisa_3d8/bin/activate  
-cd ~/pyvisa_3d8/Scripts/activate  
+cd ~/pyvisa_3d8/Scripts  
 .\activate   
 pip install pyvisa scipy matplotlib numpy pandas  
-4. Congratulations, you have already installed this package. If you want ROOT, bing CERN ROOT for more details.    
+4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.    
 # Usage
-This projects aim to generate scripts for TBS2000B osilloscope. In order to save many waveforms for multiple channels. Also, you will find scripts to help you analyze the waveform data. i.e. analysis_waveform_data.py or single_channel_selector.C, which required ROOT installed. A raspberry pi 4 is already setup python and root on it. Please contact me to get the ip address and accout.
 # Contact me
 Author: Zifeng XU  
 Email: zifeng.xu@cern.ch
 # Why
-Proposal: save oscilloscope  
-Usage: Use it to generate scripts for OpenChoice Talker Listener  
+Proposal:     
+Usage:   
 # TODO
 Add oscilloscope setup for SiPM and PMT  
 # How to
@@ -42,8 +41,13 @@ Add oscilloscope setup for SiPM and PMT
 cd ~/pyvisa_3d8/Scripts/activate    
 .\activate  
 ## Example
-Try it, simply, this command generate a script names output_scripts_names, which save 100 waveforms, and divide them into three channels.  
-Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --outputdir output_dir  
+### RunMeasurement.py 
+Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --outputdir output_dir    
+Output filename for example will be this_is_an_example-CH1.csv in output_dir. This command save 5 waveforms in output_dir  
+### Transform_csv_to_tree.py
+Example: python Transform_csv_to_tree.py this_is_an_example.root input_dir input_file_name this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --n_max_points 2000  
+### Plot_waveform_from_root.py  
+Example: python Plot_waveform_from_root.py this_is_an_example.root --n_plot_waveforms 10 --plot_channels CH1,CH2,CH3 --save_names this_is_an_example
 ## Get some help
 Example: python  xxx.py --help  
 Read the comments on the begin of each scripts  
