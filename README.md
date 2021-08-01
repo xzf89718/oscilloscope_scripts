@@ -28,6 +28,7 @@ cd ~/pyvisa_3d8/Scripts
 pip install pyvisa scipy matplotlib numpy pandas  
 4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.    
 # Usage
+This project contains interface to help you collect waveform data from osilloscope and transform them into root file.
 # Contact me
 Author: Zifeng XU  
 Email: zifeng.xu@cern.ch
