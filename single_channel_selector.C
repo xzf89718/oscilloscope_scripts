@@ -145,13 +145,13 @@ Int_t single_channel_selector::Pass_trigger_charge()
 
 Int_t single_channel_selector::Pass_trigger_level()
 {
-   if (m_max_voltage <= -2.68)
+   if (m_max_voltage <= -2.60)
    {
-      return 0;
+      return 1;
    }
    else
    {
-      return 1;
+      return 0;
    }
 }
 
