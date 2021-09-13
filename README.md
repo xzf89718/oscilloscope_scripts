@@ -19,7 +19,7 @@ These for analysis:
 $pip install pyvisa scipy matplotlib numpy pandas  
 
 4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.   
-5. In order to use the root scripts, you need ROOT and pyroot setup. Get Ubuntu20.04 VM with ROOT here: https://box.nju.edu.cn/d/045506afb0f347b78806/ or G4VM provided by https://cn.bing.com/search?q=Geant4VM&qs=n&form=QBRE&sp=-1&pq=geant4vm&sc=8-8&sk=&cvid=BEC865BE3D63424C80A85E2F698003F2  \
+5. In order to use the root scripts, you need ROOT and pyroot setup. Get Ubuntu20.04 VM with ROOT here: https://box.nju.edu.cn/d/045506afb0f347b78806/   
 6. How to build your own ROOT release on Ubuntu20.04: https://blog.csdn.net/weixin_44121665/article/details/102637844?spm=1001.2014.3001.5502  
 # Usage
 This project contains interface to help you collect waveform data from osilloscope and transform them into root file.
