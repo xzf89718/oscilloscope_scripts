@@ -4,7 +4,7 @@ git clone git@github.com:xzf89718/oscilloscope_scripts.git
 2. check out to newest release   
 // For example, checkout to v2.1 realease   
 git checkout v2.1   
-3. setup python, NI-VISA, PYVISA, numpy, scipy, matplotlib, pandas   
+3. setup python, NI-VISA, PYVISA 
 // For Windows   
 NI-VISA:   
 https://www.ni.com/zh-cn/support/downloads/drivers/download.ni-visa.html   
@@ -14,6 +14,8 @@ https://www.python.org/downloads/release/python-383/
 ## The commands here aim to setup package for python  
 $pip install -U virtualenv  
 $virtualenv -p 3.8 ~/pyvisa_3d8  
+Now you're able to collect data via the RunMeasurement.py scripts!  
+These for analysis:  
 $pip install pyvisa scipy matplotlib numpy pandas  
 
 4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.   
@@ -43,7 +45,7 @@ $tree_waveform_CH1->Process("single_channel_selector.C", "test_tree.root")
 $.q  
 $root test_tree.root  
 $event->Process("OutputCharge.C")  
-$.q
+$.q  
 $root UseWorkspaceForFit.C  
 ### Data collected by me, without proper Impedance matching
 https://box.nju.edu.cn/d/8c35131d91e846c4ada6/   
