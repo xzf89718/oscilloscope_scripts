@@ -39,7 +39,6 @@ void single_channel_selector::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
-   m_baseline_voltage = -2.5;
    TString option = GetOption();
    TString output_filename = option;
 
@@ -50,9 +49,11 @@ void single_channel_selector::Begin(TTree * /*tree*/)
    m_tree_event->Branch("max_voltage", &m_max_voltage, "max_voltage/D");
    m_tree_event->Branch("width", &m_width, "width/I");
    m_tree_event->Branch("charge", &m_charge, "charge/D");
+   m_tree_event->Branch("charge_shift", &m_charge_shift, "charge_shift/D");
    m_tree_event->Branch("trig_charge", &m_trig_charge, "trig_charge/I");
    m_tree_event->Branch("pass_width", &m_pass_width, "pass_width/I");
    m_tree_event->Branch("trig_level", &m_trig_level, "trig_level/I");
+   m_tree_event->Branch("baseline_estimate", &m_baseline_voltage, "baseline_estimate/D");
 }
 
 void single_channel_selector::SlaveBegin(TTree * /*tree*/)
@@ -90,9 +91,11 @@ Bool_t single_channel_selector::Process(Long64_t entry)
       return kFALSE;
    }
 
+   m_baseline_voltage = GetBaseLineEstimate();
    m_max_voltage = GetMinimumValue();
    m_width = GetWidth();
    m_charge = GetCharge();
+   m_charge_shift = m_charge - m_baseline_voltage * 2000;
 
    m_trig_charge = Pass_trigger_charge();
    m_pass_width = Pass_width();
@@ -117,35 +120,37 @@ void single_channel_selector::Terminate()
    // the results graphically or save the results to file.
 
    m_tree_event->Write();
+   m_output_file->Close();
 }
 
 Int_t single_channel_selector::Pass_width()
 {
-   if (m_width <= 10)
+   if (m_width <= 100)
    {
-      return 0;
+      return 1;
    }
    else
    {
-      return 1;
+      return 0;
    }
 }
 Int_t single_channel_selector::Pass_trigger_charge()
 {
 
-   if (m_charge <= -4400)
+   if (m_charge <= -m_baseline_voltage * 2000)
    {
-      return 0;
+      return 1;
    }
    else
    {
-      return 1;
+      return 0;
    }
 }
 
 Int_t single_channel_selector::Pass_trigger_level()
 {
-   if (m_max_voltage <= -2.60)
+   Double_t pass_level = -0.2;
+   if (m_max_voltage - m_baseline_voltage <= pass_level)
    {
       return 1;
    }
@@ -178,7 +183,7 @@ Int_t single_channel_selector::GetWidth()
    Double_t max_amplitude = m_baseline_voltage - m_max_voltage;
    for (auto i = 899; i < 1200; i++)
    {
-      if ((m_baseline_voltage - voltage[i]) < (max_amplitude / (1.4142136)))
+      if ((m_baseline_voltage - voltage[i]) >= (max_amplitude / (1.4142136)))
       {
          width = width + 1;
       }
@@ -196,4 +201,19 @@ Double_t single_channel_selector::GetCharge()
    }
 
    return charge;
+}
+
+Double_t single_channel_selector::GetBaseLineEstimate()
+{
+   int n_points = 500;
+   int i_begin = 0;
+   Double_t baseline = 0;
+   for (auto i = i_begin; i < i_begin + n_points; i++)
+   {
+      baseline = baseline + voltage[i];
+   }
+
+   baseline = baseline / n_points;
+   m_baseline_voltage = baseline;
+   return baseline;
 }

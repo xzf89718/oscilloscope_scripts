@@ -57,12 +57,14 @@ private:
    Double_t m_max_voltage;
    Int_t m_width;
    Double_t m_charge;
+   Double_t m_charge_shift;
    Int_t m_trig_charge;
    Int_t m_pass_width;
    Int_t m_trig_level;
 
    Double_t GetMinimumValue();
    Double_t GetCharge();
+   Double_t GetBaseLineEstimate();
    Int_t GetWidth();
 
    Int_t Pass_trigger_charge();

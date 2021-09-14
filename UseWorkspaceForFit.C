@@ -24,7 +24,10 @@ int UseWorkspaceForFit(TString input_file = "gainFitWorkspace.root")
 
     auto f1 = TFile::Open(input_file, "read");
     auto f2 = TFile::Open("output_charge.root", "READ");
+    // charge, include baseline
     auto h1 = (TH1F *)f2->Get("ahisto");
+    // charge, deduct baseline
+    auto h1_shift = (TH1F*)f2->Get("ahisto_shift");
 
     // Get all workspace
     auto wTwo = (RooWorkspace *)f1->Get("worksapceTwoPeak");
@@ -124,26 +127,52 @@ int UseWorkspaceForFit(TString input_file = "gainFitWorkspace.root")
     gPad->Update();
 
 
-    // three peak
+    // // three peak
+    // auto threePeakGaus = wThree->pdf("threePeakGaus");
+    // auto voltage1= wThree->var("voltage1");
+    // voltage1->setRange(-5200., -4700.);
+    // auto mean1_1 = wThree->var("mean1");
+    // // mean1_1->setRange(-5120., -5100.);
+    // mean1_1->setVal(-5120.);
+    // auto mean1_2 = wThree->var("mean2");
+    // // mean1_2->setRange(-5160., -5120.);
+    // mean1_2->setVal(-5130.); 
+    // auto mean1_3 = wThree->var("mean3");
+    // // mean1_3->setRange(-5200., -5100.);
+    // // mean1_3->setVal(-5140.);
+    // // auto gaus1 = wThree->pdf("gaus1ThreePeak");
+    // // auto n1 = wThree->var("n1");
+    // // auto gaus2 = wThree->pdf("gaus2ThreePeak");
+    // // auto n2 = wThree->var("n2");
+    // // auto gaus3 = wThree->pdf("gaus3ThreePeak");
+    // // auto n3 = wThree->var("n3");
+    // RooDataHist data1("data1", "data1", *voltage1, h1);
+    // auto c13 = new TCanvas();
+    // auto frame_voltage1= voltage1->frame();
+    // data1.plotOn(frame_voltage1);
+    // threePeakGaus->fitTo(data1,PrintEvalErrors(10));
+    // threePeakGaus->plotOn(frame_voltage1);
+    // threePeakGaus->plotOn(frame_voltage1, Components("gaus1ThreePeak"), LineColor(kRed), LineStyle(kDashed));
+    // threePeakGaus->plotOn(frame_voltage1, Components("gaus2ThreePeak"), LineColor(kBlue), LineStyle(kDashed));
+    // threePeakGaus->plotOn(frame_voltage1, Components("gaus3ThreePeak"), LineColor(kGreen), LineStyle(kDashed));
+    // frame_voltage1->Draw();
+    // gPad->Update();
+
+    // three peak deduct baseline
     auto threePeakGaus = wThree->pdf("threePeakGaus");
     auto voltage1= wThree->var("voltage1");
-    voltage1->setRange(-5200., -4700.);
+    voltage1->setRange(-500., 100.);
     auto mean1_1 = wThree->var("mean1");
-    // mean1_1->setRange(-5120., -5100.);
-    mean1_1->setVal(-5120.);
+    mean1_1->setRange(-100., 0.);
+    mean1_1->setVal(-10.);
     auto mean1_2 = wThree->var("mean2");
-    // mean1_2->setRange(-5160., -5120.);
-    mean1_2->setVal(-5130.); 
+    mean1_2->setRange(-100., 0.);
+    mean1_2->setVal(-10.); 
     auto mean1_3 = wThree->var("mean3");
-    // mean1_3->setRange(-5200., -5100.);
-    // mean1_3->setVal(-5140.);
-    auto gaus1 = wThree->pdf("gaus1ThreePeak");
-    auto n1 = wThree->var("n1");
-    auto gaus2 = wThree->pdf("gaus2ThreePeak");
-    auto n2 = wThree->var("n2");
-    auto gaus3 = wThree->pdf("gaus3ThreePeak");
+    mean1_3->setRange(-100., -0.);
+    mean1_3->setVal(-10.);
     auto n3 = wThree->var("n3");
-    RooDataHist data1("data1", "data1", *voltage1, h1);
+    RooDataHist data1("data1", "data1", *voltage1, h1_shift);
     auto c13 = new TCanvas();
     auto frame_voltage1= voltage1->frame();
     data1.plotOn(frame_voltage1);

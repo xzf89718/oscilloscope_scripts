@@ -25,13 +25,16 @@ public:
    TTree *fChain = 0;   //!pointer to the analyzed TTree or TChain
    TFile *m_output_file;
    TH1F *ahisto;
+   TH1F *ahisto_shift;
    // Readers to access the data (delete the ones you do not need).
    TTreeReaderValue<Double_t> max_voltage = {fReader, "max_voltage"};
    TTreeReaderValue<Int_t> width = {fReader, "width"};
    TTreeReaderValue<Double_t> charge = {fReader, "charge"};
+   TTreeReaderValue<Double_t> charge_shift = {fReader, "charge_shift"};
    TTreeReaderValue<Int_t> trig_charge = {fReader, "trig_charge"};
    TTreeReaderValue<Int_t> pass_width = {fReader, "pass_width"};
    TTreeReaderValue<Int_t> trig_level = {fReader, "trig_level"};
+   TTreeReaderValue<Double_t> baseline_estimate = {fReader, "baseline_estimate"};
 
    OutputCharge(TTree * /*tree*/ = 0) {}
    virtual ~OutputCharge() {}

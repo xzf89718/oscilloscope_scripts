@@ -37,6 +37,8 @@ void OutputCharge::Begin(TTree * /*tree*/)
    TString option = GetOption();
    m_output_file = TFile::Open("output_charge.root", "RECREATE");
    ahisto = new TH1F("ahisto", "ahisto", 500, -5200, -4700);
+   ahisto_shift = new TH1F("ahisto_shift", "ahisto_shift", 500, -500., 100.);
+   
 }
 
 void OutputCharge::SlaveBegin(TTree * /*tree*/)
@@ -75,6 +77,7 @@ Bool_t OutputCharge::Process(Long64_t entry)
    if(*trig_level)
    {
       ahisto->Fill(*charge);
+      ahisto_shift->Fill(*charge_shift);
    }
    return kTRUE;
 }
@@ -93,5 +96,6 @@ void OutputCharge::Terminate()
    // the results graphically or save the results to file.
 
    ahisto->Write();
+   ahisto_shift->Write();
    m_output_file->Close();
 }
