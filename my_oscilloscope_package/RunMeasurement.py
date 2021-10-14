@@ -5,6 +5,9 @@
 # Usage: provide interafate to save waveform data from Tek TBS2000B oscilloscope
 # Make sure you have output_dir, make sure the save_channels is enable in oscilloscope
 # Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir
+# Use auto scope_name, the first name
+# Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto
+# Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name USB0::0x0699::0x03C7::C011248::INSTR
 # Output filename for example will be this_is_an_example-CH1.csv in output_dir
 import argparse
 import time
@@ -37,33 +40,41 @@ def Software_trigger(dic_scaled_time, dic_scaled_voltage):
     return True
 
 
-print("Here are instruments you have:")
+print("Here are instruments' name you have:")
 resource_manager = pyvisa.ResourceManager()
 inst_name = resource_manager.list_resources()
 print("{0}".format(inst_name))
 
 if not(__name__ == "__main__"):
+    print("Interactive mode")
+    print("Use command RunMeasurement.SampleOnce(RunMeasurement.Scope,\"CH1,CH2,CH3\")")
     try:
         # Interactive mode
-        Scope = Oscilloscope()
-        print("Interactive mode")
-        print("Use command SampleOnce(RunMeasurement.Scope,\"CH1,CH2,CH3\")")
-    except:
-        print("Check connection between oscilloscope and computer")
+        scope_name = input(
+            "Enter your scope_name, also provide \"default\" and \"auto\" for quick setup\n")
+        if (scope_name == "default"):
+            Scope = Oscilloscope()
+        elif (scope_name == "auto"):
+            Scope = Oscilloscope(inst_name[0])
+        else:
+            Scope = Oscilloscope(scope_name)
+    except pyvisa.VisaIOError:
+        print("Fail to create a Osilloscope object.\n1, Check connection between oscilloscope and computer\n2, Check the name of Scope and the inst_name")
 
 # Batch mode
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Save multiple waveform into csv files. You can even make measure. Author: Zifeng XU, email: zifeng.xu@cern.ch")
-
     parser.add_argument("output_filename", type=str,
                         help="Output file name for waveforms")
     parser.add_argument("--n_save_waveforms", type=int, default=10,
                         help="N_Waveforms save in the output scripts")
     parser.add_argument("--save_channels", type=str, default="CH1",
                         help="Which channel should we save in the scripts? Example: CH1,CH2. Becarful, if you add wrong Channel here, often cause this program break down")
-    parser.add_argument("--output_dir", type=str, default="",
+    parser.add_argument("--output_dir", type=str, default="./",
                         help="Which directory to save waveform data, please make sure you have this directory in you USB. For examle: /usb0/waveform_data")
+    parser.add_argument("--scope_name", type=str, default="default",
+                        help="scope_name, every oscilloscope has its own name, which is needed when instantiate the Scope, default, auto, and specify the name you like is supported")
     args = parser.parse_args()
     print("All parameters get from commandline are:")
     print(args)
@@ -72,6 +83,7 @@ if __name__ == "__main__":
     n_save_waveforms = args.n_save_waveforms
     save_channels = args.save_channels
     output_dir = args.output_dir
+    scope_name = args.scope_name
     # oscilloscope_setup_scripts = args.oscilloscope_setup_scripts
 
     print("****************************************************************************************")
@@ -83,7 +95,12 @@ if __name__ == "__main__":
     print("****************************************************************************************")
     begin_time = time.time()
     # Initialize Oscilloscope
-    Scope = Oscilloscope()
+    if(scope_name == "default"):
+        Scope = Oscilloscope()
+    elif(scope_name == "auto"):
+        Scope = Oscilloscope(inst_name[0])
+    else:
+        Scope = Oscilloscope(scope_name)
     # Loop from 0 to n_save_waveforms, save all wave form
     for i_waveform in range(0, n_save_waveforms):
         # Autoset, you wont want this in our measurement!
@@ -95,8 +112,6 @@ if __name__ == "__main__":
         for _channel in save_channels.split(","):
             WriteToCsv("{3}/{0}-{1}-{2}.csv".format(output_filename, _channel,
                        str(i_waveform), output_dir), wavetime[_channel], waveform[_channel])
-            # plt.plot(wavetime,waveform)
-            # plt.show()
             # time.sleep(0.5)
 
         if_mod_zero = i_waveform % (n_save_waveforms / 10)

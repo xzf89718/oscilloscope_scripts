@@ -16,7 +16,7 @@ $pip install -U virtualenv
 $virtualenv -p 3.8 ~/pyvisa_3d8  
 Now you're able to collect data via the RunMeasurement.py scripts!  
 These for analysis:  
-$pip install pyvisa scipy matplotlib numpy pandas  
+$pip install pyvisa scipy matplotlib numpy pandas ipython  
 
 4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.   
 5. In order to use the root scripts, you need ROOT and pyroot setup. Get Ubuntu20.04 VM with ROOT here: https://box.nju.edu.cn/d/045506afb0f347b78806/   
@@ -25,14 +25,27 @@ $pip install pyvisa scipy matplotlib numpy pandas
 This project contains interface to help you collect waveform data from osilloscope and transform them into root file.
 # Contact me
 Author: Zifeng XU  
-Email: zifeng.xu@cern.ch
+Email: zifeng.xu@foxmail.com  
+mg20220214@smail.nju.edu.cn  
+zifeng.xu@cern.ch  
 # How to
 ## Every Login
 cd ~/pyvisa_3d8/Scripts/activate    
 .\activate  
 ## Example
 ### RunMeasurement.py 
-Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --outputdir output_dir    
+Batch mode:  
+Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir      
+Run with auto mode scope name  
+Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto
+Interactive mode:  
+$ipython  
+[0] import RunMeasurement  
+[1] RunMeasurement.SampleOnce(RunMeasurement.Scope, "CH1,CH2")  
+[2] Enter your scope_name, also provide "default" and "auto" for quick setup  
+[3] auto  
+If the setup is correct, you will got a plot contain waveforms from CH1 and CH2  
+
 ### Transform_csv_to_tree.py
 Example: python Transform_csv_to_tree.py this_is_an_example.root input_dir input_file_name this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --n_max_points 2000  
 ### Plot_waveform_from_root.py  
