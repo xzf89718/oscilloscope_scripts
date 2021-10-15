@@ -1,4 +1,4 @@
-# Setup this packate and dependencies
+# Setup this package and dependencies
 1. get this package:  
 $git clone git@github.com:xzf89718/oscilloscope_scripts.git   
 2. check out to newest release   
@@ -13,8 +13,8 @@ https://www.python.org/downloads/release/python-383/
 
 ## The commands here aim to setup package for python  
 $pip install -U virtualenv  
-$virtualenv -p 3.8 ~/pyvisa_3d8  
-$~/pyvisa_3d8/Scripts/activate  
+$virtualenv -p 3.8 \~/pyvisa_3d8  
+$\~/pyvisa_3d8/Scripts/activate  
 Now you're able to collect data via the RunMeasurement.py scripts!  
 These for analysis:  
 (pyvisa_3d8)$pip install pyvisa scipy matplotlib numpy pandas ipython  
