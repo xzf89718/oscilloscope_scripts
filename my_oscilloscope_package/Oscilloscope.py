@@ -187,10 +187,13 @@ def WriteToCsv(output_filename, array_time, array_voltage, sep=','):
         ex = Exception("The size of time and voltage is not equal")
         raise ex
     # Write header
-    with open(output_filename, 'w') as file_object:
-        file_object.write("scaled_time{0}scaled_voltage\n".format(sep))
-        i = 0
-        while (i < length_of_voltage):
-            file_object.write("{0}{1}{2}{3}".format(
-                str(array_time[i]), sep, str(array_voltage[i]),  "\n"))
-            i = i + 1
+    try:
+        with open(output_filename, 'w') as file_object:
+            file_object.write("scaled_time{0}scaled_voltage\n".format(sep))
+            i = 0
+            while (i < length_of_voltage):
+                file_object.write("{0}{1}{2}{3}".format(
+                    str(array_time[i]), sep, str(array_voltage[i]),  "\n"))
+                i = i + 1
+    except FileNotFoundError:
+        print("Oscilloscope WriteToCsv ERROR: {0} not exist. Create this dir first. like $mkdir {0} or just create this in Windows GUI".format(output_filename.split("/")[0]))
