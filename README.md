@@ -14,9 +14,10 @@ https://www.python.org/downloads/release/python-383/
 ## The commands here aim to setup package for python  
 $pip install -U virtualenv  
 $virtualenv -p 3.8 ~/pyvisa_3d8  
+$~/pyvisa_3d8/Scripts/activate  
 Now you're able to collect data via the RunMeasurement.py scripts!  
 These for analysis:  
-$pip install pyvisa scipy matplotlib numpy pandas ipython  
+(pyvisa_3d8)$pip install pyvisa scipy matplotlib numpy pandas ipython  
 
 4. Congratulations, you have already installed this package. If you want to run analysis and packup scipts, you need ROOT, search CERN ROOT for more details.   
 5. In order to use the root scripts, you need ROOT and pyroot setup. Get Ubuntu20.04 VM with ROOT here: https://box.nju.edu.cn/d/045506afb0f347b78806/   
@@ -30,7 +31,7 @@ mg20220214@smail.nju.edu.cn
 zifeng.xu@cern.ch  
 # How to
 ## Every Login
-$cd ~/pyvisa_3d8/Scripts/activate    
+$cd ~/pyvisa_3d8/Scripts     
 $.\activate  
 ## Example
 ### RunMeasurement.py 
