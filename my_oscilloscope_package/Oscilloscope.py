@@ -5,6 +5,7 @@
 #      2, Only sample the channel you already setup
 import pyvisa
 import time
+import sys
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -196,4 +197,5 @@ def WriteToCsv(output_filename, array_time, array_voltage, sep=','):
                     str(array_time[i]), sep, str(array_voltage[i]),  "\n"))
                 i = i + 1
     except FileNotFoundError:
-        print("Oscilloscope WriteToCsv ERROR: {0} not exist. Create this dir first. like $mkdir {0} or just create this in Windows GUI".format(output_filename.split("/")[0]))
+        print("Oscilloscope WriteToCsv ERROR: {0} not exist. Create this dir first. like $mkdir {0} or just create this in Windows GUI. This scripts has been terminated.".format(output_filename.split("/")[0]))
+        sys.exit()
