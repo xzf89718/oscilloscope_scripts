@@ -1,9 +1,9 @@
 # Setup this packate and dependencies
 1. get this package:  
-git clone git@github.com:xzf89718/oscilloscope_scripts.git   
+$git clone git@github.com:xzf89718/oscilloscope_scripts.git   
 2. check out to newest release   
 // For example, checkout to v2.1 realease   
-git checkout v2.1   
+$git checkout v2.1   
 3. setup python, NI-VISA, PYVISA 
 // For Windows   
 NI-VISA:   
@@ -30,14 +30,14 @@ mg20220214@smail.nju.edu.cn
 zifeng.xu@cern.ch  
 # How to
 ## Every Login
-cd ~/pyvisa_3d8/Scripts/activate    
-.\activate  
+$cd ~/pyvisa_3d8/Scripts/activate    
+$.\activate  
 ## Example
 ### RunMeasurement.py 
 Batch mode:  
-Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir      
+Example: $python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir      
 Run with auto mode scope name  
-Example: python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto
+Example: $python RunMeasurement.py this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto
 Interactive mode:  
 $ipython  
 [0] import RunMeasurement  
@@ -47,9 +47,9 @@ $ipython
 If the setup is correct, you will got a plot contain waveforms from CH1 and CH2  
 
 ### Transform_csv_to_tree.py
-Example: python Transform_csv_to_tree.py this_is_an_example.root input_dir input_file_name this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --n_max_points 2000  
+Example: $python Transform_csv_to_tree.py this_is_an_example.root input_dir input_file_name this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --n_max_points 2000  
 ### Plot_waveform_from_root.py  
-Example: python Plot_waveform_from_root.py this_is_an_example.root --n_plot_waveforms 10 --plot_channels CH1,CH2,CH3 --save_names this_is_an_example
+Example: $python Plot_waveform_from_root.py this_is_an_example.root --n_plot_waveforms 10 --plot_channels CH1,CH2,CH3 --save_names this_is_an_example
 ### Do cut on waveform data and do fit
 At the very begining, make the workspace, contains pdf you need  
 $root MakeWorkspaceForGain.C  
@@ -63,5 +63,5 @@ $root UseWorkspaceForFit.C
 ### Data collected by me, without proper Impedance matching
 https://box.nju.edu.cn/d/8c35131d91e846c4ada6/   
 ## Get some help
-Example: python  xxx.py --help  
+Example: $python  xxx.py --help  
 Read the comments on the begin of each scripts  
