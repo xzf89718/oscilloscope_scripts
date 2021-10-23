@@ -1,4 +1,5 @@
 # Author: Zifeng Xu
+# Email: zifeng.xu@foxmail.com
 # Usage: Provide a full python analysis skeleton to analyze the data which taken from the cosmic ray muon detection experiment
 # Dependencies: python 3.6+, numpy matplotlib pandas
 # 怎么做? 先编辑脚本，编写自己的分析
@@ -67,7 +68,7 @@ class QuickAnalysisBase(object):
 
         return True
 
-    def LoadOneData(self):
+    def LoadData(self):
         for channel in self.save_channels:
             data_dir = "{0}-{1}-{2}.csv".format(
                 self.input_fileprefix, channel, self.entry)
@@ -114,7 +115,7 @@ class QuickAnalysisBase(object):
             print("Make histogram for {0}".format(ana))
             fig, ax = plt.subplots()
             n, bins, patches = ax.hist(
-                self.analysis_result[ana], bins=NUM_BINS, density=True)
+                self.analysis_result[ana], bins=NUM_BINS, density=False)
             ax.set_title(
                 "THIS PLOT MADE BY ZIFENG. MODIFY IT BEFORE SUBMIT YOUR REPORT!!!!")
             ax.set_xlabel(ana)
@@ -137,7 +138,7 @@ class QuickAnalysisBase(object):
 
     def Loop(self):
         while self.entry < self.n_save_waveforms:
-            self.LoadOneData()
+            self.LoadData()
             self.Process()
             self.DeleteOneData()
             self.entry = self.entry + 1
@@ -174,8 +175,8 @@ class QuickAnalysis_Zifeng(QuickAnalysisBase):
 
         # Do some calculation, derive some value. Use self.Fill() to store analysis result
         # Here just show how to book them into self.analysis_result
-        self.Fill("ana_test1", self.scaled_voltage['CH1'][1000])
-        self.Fill("ana_test2", self.scaled_voltage['CH2'][1000])
+        self.Fill("ana_test1", self.scaled_voltage['CH1'][999])
+        self.Fill("ana_test2", self.scaled_voltage['CH2'][999])
 
         return True
 
