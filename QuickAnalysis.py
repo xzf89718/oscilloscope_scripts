@@ -15,7 +15,7 @@
 # 提醒：要修改柱状图的格式，可以修改QuickAnalysisBase中的QuickHist(), 更好的做法是，在自己的派生类中重写一个，仿照基类
 # 提醒：要修改分析的结果，可以修改QuickAnalysisBase中的QuickResult(), 更好的做法是，在自己的派生类中重写一个，仿照基类
 # 运行分析
-# Example：python QuickAnalysis this_is_an_example --n_save_waveforms 10 --save_channels CH1,CH2 input_dir input_dir
+# Example：python QuickAnalysis.py this_is_an_example --n_save_waveforms 10 --save_channels CH1,CH2 --input_dir input_dir
 import argparse
 import os
 
