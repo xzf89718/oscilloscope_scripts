@@ -8,7 +8,9 @@
 # 3, 在Process()内，对读取的数据进行分析。当前读取到的文件的时间存在：self.scaled_time[channel]内；读取到的文件的电压存在：self.scaled_voltage[channel]内，数据格式为numpy的ndarray。
 # 对数据进行分析，然后调用self.Fill("name_of_analysis", value), 将分析所得值储存在self.analysis_result["name_of_analysis"]内
 # 4, 在Terminate()内，对分析得到的结果进行可视化。我准备了self.QuickHist()和self.QuickResult()供同学们调用，可以快速画柱状图和均值，中位数，实验标准差
-# 5, 在本脚本的最下方，加入：quickanalysis=QuickAnalysis_Zifeng(INPUT_FILENAME, N_SAVE_WAVEFORMS, SAVE_CHANNELS, INPUT_DIR)
+# 5, 在本脚本的最下方，加入：
+# quickanalysis=QuickAnalysis_Zifeng(INPUT_FILENAME, N_SAVE_WAVEFORMS, SAVE_CHANNELS, INPUT_DIR)
+# quickanalysis.RunAnalysis()                              
 # 提醒：可以直接修改助教这里写的QuickAnalysis_Zifeng() (类名改下。。。。)
 # 提醒：要修改柱状图的格式，可以修改QuickAnalysisBase中的QuickHist(), 更好的做法是，在自己的派生类中重写一个，仿照基类
 # 提醒：要修改分析的结果，可以修改QuickAnalysisBase中的QuickResult(), 更好的做法是，在自己的派生类中重写一个，仿照基类
