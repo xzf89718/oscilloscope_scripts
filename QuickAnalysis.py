@@ -10,7 +10,7 @@
 # 4, 在Terminate()内，对分析得到的结果进行可视化。我准备了self.QuickHist()和self.QuickResult()供同学们调用，可以快速画柱状图和均值，中位数，实验标准差
 # 5, 在本脚本的最下方，加入：
 # quickanalysis=QuickAnalysis_Zifeng(INPUT_FILENAME, N_SAVE_WAVEFORMS, SAVE_CHANNELS, INPUT_DIR)
-# quickanalysis.RunAnalysis()                              
+# quickanalysis.RunAnalysis()
 # 提醒：可以直接修改助教这里写的QuickAnalysis_Zifeng() (类名改下。。。。)
 # 提醒：要修改柱状图的格式，可以修改QuickAnalysisBase中的QuickHist(), 更好的做法是，在自己的派生类中重写一个，仿照基类
 # 提醒：要修改分析的结果，可以修改QuickAnalysisBase中的QuickResult(), 更好的做法是，在自己的派生类中重写一个，仿照基类
@@ -138,6 +138,23 @@ class QuickAnalysisBase(object):
 
         return True
 
+    def QuickPlot(self):
+        # Only call during Process()
+        fig, ax = plt.subplot()
+        for channel in self.save_channels:
+            ax.plot(self.scaled_time[channel], self.scaled_voltage[channel])
+        ax.set_title(
+            "THIS PLOT MADE BY ZIFENG. MODIFY IT BEFORE SUBMIT YOUR REPORT!!!!")
+        ax.set_xlabel("scaled_time/s")
+        ax.set_ylabel("scaled_voltage/V")
+        channels = self.save_channels[0]
+        for channel in self.save_channels[1:]:
+            channels = channels+"_"+channel
+        fig.savefig(
+            "{0}-{1}-{2}.png".format(self.input_fileprefix, channels, self.entry))
+
+        return True
+
     def Loop(self):
         while self.entry < self.n_save_waveforms:
             self.LoadData()
@@ -156,6 +173,8 @@ class QuickAnalysisBase(object):
         return True
 
 # If you want an example
+
+
 class QuickAnalysis_Zifeng(QuickAnalysisBase):
 
     """
@@ -175,6 +194,8 @@ class QuickAnalysis_Zifeng(QuickAnalysisBase):
 
     def Process(self):
 
+        # This will make many plots!
+        self.QuickPlot()
         # Do some calculation, derive some value. Use self.Fill() to store analysis result
         # Here just show how to book them into self.analysis_result
         self.Fill("ana_test1", self.scaled_voltage['CH1'][999])
