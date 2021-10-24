@@ -140,7 +140,7 @@ class QuickAnalysisBase(object):
 
     def QuickPlot(self):
         # Only call during Process()
-        fig, ax = plt.subplot()
+        fig, ax = plt.subplots()
         for channel in self.save_channels:
             ax.plot(self.scaled_time[channel], self.scaled_voltage[channel])
         ax.set_title(
@@ -195,6 +195,8 @@ class QuickAnalysis_Zifeng(QuickAnalysisBase):
     def Process(self):
 
         # This will make many plots!
+        # This option is time consuming
+        # Comment it to analysis faster
         self.QuickPlot()
         # Do some calculation, derive some value. Use self.Fill() to store analysis result
         # Here just show how to book them into self.analysis_result
