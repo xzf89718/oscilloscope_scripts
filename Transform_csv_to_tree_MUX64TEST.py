@@ -74,7 +74,7 @@ for input_file in iter_inputfiles:
     _measuretimes = np.zeros(1, dtype=int)
     _measuretimes[0] = MEASURETIMES
     # Varies by input files
-    _nametag = bytearray(n_max_points + 1)
+    _nametag = bytearray(20 + 1)
     _channel = np.zeros(1, dtype=int)
     _temperature = np.zeros(1, dtype=float)
     _load = np.zeros(1, dtype=float)
@@ -87,7 +87,7 @@ for input_file in iter_inputfiles:
 
     ntuple.Branch("measuretimes", _measuretimes, "measuretimes/I")
     ntuple.Branch("nametag", _nametag,
-                  "nametag[{0}]/C".format(n_max_points + 1))
+                  "nametag[{0}]/C".format(20))
     ntuple.Branch("channel", _channel, "channel/I")
     ntuple.Branch("temperature", _temperature, "temperature/D")
     ntuple.Branch("load", _load, "load/D")

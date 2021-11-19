@@ -24,13 +24,26 @@
 //
 
 #include "MUX64_TEST_Selector.h"
+#include <TROOT.h>
 #include <TH2.h>
 #include <TStyle.h>
+#include <TMath.h>
+#include <TH1F.h>
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TGraph.h>
+#include <TGraphErrors.h>
+#include <TMultiGraph.h>
+#include <TStyle.h>
+#include <TTree.h>
+#include <string>
 
 #include <iostream>
+#include <string.h>
 
 using std::cout;
 using std::endl;
+using std::string;
 
 void MUX64_TEST_Selector::Begin(TTree * /*tree*/)
 {
@@ -39,6 +52,27 @@ void MUX64_TEST_Selector::Begin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    TString option = GetOption();
+   // Plotting style
+   gROOT->SetStyle("ATLAS");
+   gROOT->ForceStyle();
+   gROOT->SetBatch(true);
+
+   output_file = TFile::Open("output.root", "RECREATE");
+   goodchannels = new TTree("goodchannels", "goodchannels");
+   goodchannels->Branch("max_resistance", &max_resistance);
+   goodchannels->Branch("max_voltagein", &max_voltagein);
+   goodchannels->Branch("min_resistance", &min_resistance);
+   goodchannels->Branch("min_voltagein", &min_voltagein);
+   goodchannels->Branch("channel", &channel_to_write, "channel/I");
+   goodchannels->Branch("nametag", nametag_to_write, "nametag[20]/C");
+
+   badchannels = new TTree("badchannels", "badchannels");
+   badchannels->Branch("max_resistance", &max_resistance);
+   badchannels->Branch("max_voltagein", &max_voltagein);
+   badchannels->Branch("min_resistance", &min_resistance);
+   badchannels->Branch("min_voltagein", &min_voltagein);
+   badchannels->Branch("channel", &channel_to_write, "channel/I");
+   badchannels->Branch("nametag", nametag_to_write, "nametag[20]/C");
 }
 
 void MUX64_TEST_Selector::SlaveBegin(TTree * /*tree*/)
@@ -46,7 +80,6 @@ void MUX64_TEST_Selector::SlaveBegin(TTree * /*tree*/)
    // The SlaveBegin() function is called after the Begin() function.
    // When running with PROOF SlaveBegin() is called on each slave server.
    // The tree argument is deprecated (on PROOF 0 is passed).
-
    TString option = GetOption();
 }
 
@@ -70,6 +103,41 @@ Bool_t MUX64_TEST_Selector::Process(Long64_t entry)
 
    fReader.SetLocalEntry(entry);
 
+   OnstateResistanceDumper dumper(*measuretimes, *load, Voltage_in, Current_in, Voltage_load, Current_power);
+   // Dump the on-state resistance
+   dumper.Dump();
+   // auto c1 = new TCanvas("c1", "c1", 800, 600);
+   vector<double> voltage = dumper.GetDumpedVoltageIn();
+   double *graph_voltage = &voltage[0];
+   vector<double> resistance = dumper.GetDumpedOnResistance();
+   double *graph_resistance = &resistance[0];
+   vector<double> resistance_error = dumper.GetDumpedOnResistanceError();
+   double *graph_error = &resistance_error[0];
+   Char_t *_nametag = &nametag[0];
+   strcpy(nametag_to_write, _nametag);
+   int max_index = TMath::LocMax(resistance.size(), graph_resistance);
+   int min_index = TMath::LocMin(resistance.size(), graph_resistance);
+   max_voltagein = voltage.at(max_index);
+   min_voltagein = voltage.at(min_index);
+   max_resistance = resistance.at(max_index);
+   min_resistance = resistance.at(min_index);
+   channel_to_write = *channel;
+
+   // auto zeros = new double[resistance_error.size()];
+   // for (int i = 0; i < resistance_error.size(); i++)
+   // {
+   //    zeros[i] = 0.;
+   // }
+   // TGraphErrors graph1(dumper.GetDumpedVoltageIn().size(), graph_voltage, graph_resistance, zeros, graph_error);
+   // graph1.Draw("ALP");
+   // c1->Print((string(_nametag) + "_C" + std::to_string(*channel) + ".png").c_str());
+   if(true){
+   goodchannels->Fill();
+   }
+   else{
+      badchannels->Fill();
+   }
+
    return kTRUE;
 }
 
@@ -85,12 +153,18 @@ void MUX64_TEST_Selector::Terminate()
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
+   goodchannels->Write();
+   badchannels->Write();
+   output_file->Write();
+   delete goodchannels;
+   delete badchannels;
+   output_file->Close();
 }
 
-OnstateResistanceDumper::OnstateResistanceDumper(const int measuretimes, const double load, doubleReader Voltage_in, doubleReader Current_in, doubleReader Voltage_load, doubleReader Current_power) : m_measuretimes(measuretimes), m_load(load), m_Voltage_in(Voltage_in), m_Current_in(Current_in), m_Voltage_load(Voltage_load), m_Current_in(Current_in), m_Current_power(Current_power)
+OnstateResistanceDumper::OnstateResistanceDumper(const int measuretimes, const double load, doubleReader Voltage_in, doubleReader Current_in, doubleReader Voltage_load, doubleReader Current_power) : m_measuretimes(measuretimes), m_load(load), m_Voltage_in(Voltage_in), m_Current_in(Current_in), m_Voltage_load(Voltage_load), m_Current_power(Current_power)
 {
    // Do some checks on size of inputs
-   if (m_Voltage_in.GetSize() != m_Current_in.GetSize() || m_Voltage_in.GetSize() != m_Voltage_load.GetSize() || m_Voltage_load.GetSize())
+   if (m_Voltage_in.GetSize() != m_Current_in.GetSize() || m_Voltage_in.GetSize() != m_Voltage_load.GetSize() || m_Voltage_in.GetSize() != m_Voltage_load.GetSize())
    {
       throw "Length of inputs no equal!";
    }
@@ -104,14 +178,19 @@ OnstateResistanceDumper::OnstateResistanceDumper(const int measuretimes, const d
 
 Bool_t OnstateResistanceDumper::Dump()
 {
-   double dumped_voltage, dumped_resistance, dumped_resistance_error = 0;
    for (size_t i = 0; i < (m_Voltage_in.GetSize() / m_measuretimes); i++)
-   {  
-      m_dumped_Voltage_in.at(i) = m_Voltage_in.At(i);
-      for (size_t j = 0; j < m_measuretimes; j++)
+   {
+
+      vector<double> vec_resistance(m_measuretimes);
+      vector<double> vec_voltage(m_measuretimes);
+      for (Int_t j = 0; j < m_measuretimes; j++)
       {
-         
+         vec_voltage.at(j) = m_Voltage_in.At(i * m_measuretimes + j);
+         vec_resistance.at(j) = (vec_voltage.at(j) - m_Voltage_load.At(i * m_measuretimes + j)) / m_Current_in.At(i * m_measuretimes + j);
       }
+      m_dumped_Voltage_in.at(i) = TMath::Mean(vec_voltage.begin(), vec_voltage.end());
+      m_dumped_On_resistance.at(i) = TMath::Mean(vec_resistance.begin(), vec_resistance.end());
+      m_dumped_On_resistance_error.at(i) = TMath::StdDev(vec_resistance.begin(), vec_resistance.end());
    }
    return true;
 }

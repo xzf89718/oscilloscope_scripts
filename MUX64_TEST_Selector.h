@@ -21,15 +21,14 @@
 using std::vector;
 
 typedef TTreeReaderArray<double> &doubleReader;
+
 class OnstateResistanceDumper
 {
 public:
    // Default Construct Function
    OnstateResistanceDumper(const int measuretimes, const double load, const doubleReader Voltage_in, const doubleReader Current_in, const doubleReader Voltage_load, const doubleReader Current_power);
-   // Run Dump to calculte the on-state resistance curve
-   // Core function of this OnstateResistanceDumper
-   virtual Bool_t Dump();
 
+   Bool_t Dump();
    // GetFunction
    vector<double> GetDumpedVoltageIn() { return m_dumped_Voltage_in; };
    vector<double> GetDumpedOnResistance() { return m_dumped_On_resistance; };
@@ -53,6 +52,17 @@ private:
 class MUX64_TEST_Selector : public TSelector
 {
 public:
+   // My analysis histogram
+   TFile* output_file;
+   TTree* goodchannels;
+   TTree* badchannels;
+   double max_resistance;
+   double max_voltagein;
+   double min_resistance;
+   double min_voltagein;
+   Char_t nametag_to_write[20];
+   Int_t channel_to_write;
+
    TTreeReader fReader; //!the tree reader
    TTree *fChain = 0;   //!pointer to the analyzed TTree or TChain
 
