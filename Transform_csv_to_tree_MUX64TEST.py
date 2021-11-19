@@ -32,7 +32,6 @@ def bytearrays_withzero(str):
 
     c_str = bytearray(len(str) + 1)
     char_copier(c_str, str)
-
     return c_str
 
 
