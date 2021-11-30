@@ -184,15 +184,15 @@ Bool_t MUX64_TEST_Selector::Process(Long64_t entry)
 
    int max_index_error = TMath::LocMax(relative_resistance_error.size(), graph_relative_error);
    int min_index_error = TMath::LocMin(relative_resistance_error.size(), graph_relative_error);
-   max_resistance_error = relative_resistance_error.at(max_resistance_error);
+   max_resistance_error = relative_resistance_error.at(max_index_error);
 
-   if (true)
+   if (max_resistance > 1000 || min_resistance < 0 || max_resistance_error > 0.1)
    {
-      goodchannels->Fill();
+      badchannels->Fill();
    }
    else
    {
-      badchannels->Fill();
+      goodchannels->Fill();
    }
 
    return kTRUE;
@@ -255,7 +255,7 @@ Bool_t OnstateResistanceDumper::Dump()
       m_dumped_Voltage_in.at(i) = TMath::Mean(vec_voltage.begin(), vec_voltage.end());
       m_dumped_On_resistance.at(i) = TMath::Mean(vec_resistance.begin(), vec_resistance.end());
       m_dumped_On_resistance_error.at(i) = TMath::StdDev(vec_resistance.begin(), vec_resistance.end());
-      m_dumped_On_resistance_relative_error.at(i) = TMath::StdDev(vec_resistance.begin(), vec_resistance.end()) / m_dumped_On_resistance.at(i);
+      m_dumped_On_resistance_relative_error.at(i) = TMath::Abs(TMath::StdDev(vec_resistance.begin(), vec_resistance.end()) / m_dumped_On_resistance.at(i));
    }
    return true;
 }
