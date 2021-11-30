@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TH1F.h>
 #include <TSelector.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
@@ -18,6 +19,11 @@
 
 // Headers needed by this particular selector
 #include <vector>
+#include <map>
+#include <string>
+
+using std::map;
+using std::string;
 using std::vector;
 
 typedef TTreeReaderArray<double> &doubleReader;
@@ -28,11 +34,15 @@ public:
    // Default Construct Function
    OnstateResistanceDumper(const int measuretimes, const double load, const doubleReader Voltage_in, const doubleReader Current_in, const doubleReader Voltage_load, const doubleReader Current_power);
 
+   // Calculate the onstate-resistance
    Bool_t Dump();
+   // Dump the data into several vectors
+   Bool_t Dump(const map<int, vector<double> *> &mapResistance);
    // GetFunction
    vector<double> GetDumpedVoltageIn() { return m_dumped_Voltage_in; };
    vector<double> GetDumpedOnResistance() { return m_dumped_On_resistance; };
    vector<double> GetDumpedOnResistanceError() { return m_dumped_On_resistance_error; };
+   const vector<double> &GetDumpedOnRelativeError() { return m_dumped_On_resistance_relative_error; };
 
 private:
    int m_measuretimes;
@@ -47,21 +57,35 @@ private:
    vector<double> m_dumped_Voltage_in;
    vector<double> m_dumped_On_resistance;
    vector<double> m_dumped_On_resistance_error;
+   vector<double> m_dumped_On_resistance_relative_error;
 };
 
 class MUX64_TEST_Selector : public TSelector
 {
 public:
-   // My analysis histogram
-   TFile* output_file;
-   TTree* goodchannels;
-   TTree* badchannels;
+   // flag to determine if use the mean distributio to calculate chi^2
+   bool dochisquare;
+   bool usechisquare;
+
+   // variable to use mean distribution
+   TFile *mean_inputfile;
+   TH1F *goodMeanResistance;
+   TH1F *badMeanResistance;  
+   // My analysis variables
+   TFile *output_file;
+   TTree *goodchannels;
+   TTree *badchannels;
    double max_resistance;
    double max_voltagein;
    double min_resistance;
    double min_voltagein;
+   int temperature_to_write;
    Char_t nametag_to_write[20];
    Int_t channel_to_write;
+   double max_resistance_error;
+
+   map<int, vector<double> *> *m_mapResist;
+   map<int, double> *m_mapRelativeError;
 
    TTreeReader fReader; //!the tree reader
    TTree *fChain = 0;   //!pointer to the analyzed TTree or TChain
