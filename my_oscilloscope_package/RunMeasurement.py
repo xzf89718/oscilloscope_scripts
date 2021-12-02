@@ -20,7 +20,12 @@ from Oscilloscope import Oscilloscope, WriteToCsv
 
 
 def SampleOnce(inst, list_channels='CH1,CH2'):
-    wavetime, waveform = inst.Sampling(list_channels)
+    try:
+        wavetime, waveform = inst.Sampling(list_channels)
+    except pyvisa.VisaIOError as error:
+        print("The oscilloscope is not triggered more than 10s. VI_ERROR_TMO\n\033[33mA kindly remind: Check TRIGGER on oscilloscope, make sure you got a signal on the screen when press Single\033[0m")
+        print("The information below is prepared for experts:\n\033[31mVisaIOError\033[0m, meassage:{0}".format(error.args))
+        return False
     for channel in list_channels.split(","):
         plt.plot(wavetime[channel], waveform[channel])
         print(len(waveform[channel]))
@@ -29,6 +34,8 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
     plt.savefig('sample_once_{channels}'.format(
         channels=list_channels.replace(',', '_')))
     plt.show()
+
+    return True
 
 
 def Software_trigger(dic_scaled_time, dic_scaled_voltage):
