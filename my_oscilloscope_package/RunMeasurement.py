@@ -11,6 +11,7 @@
 # Output filename for example will be this_is_an_example-CH1.csv in output_dir
 import argparse
 import time
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,14 +19,8 @@ import pyvisa
 
 from Oscilloscope import Oscilloscope, WriteToCsv
 
-
 def SampleOnce(inst, list_channels='CH1,CH2'):
-    try:
-        wavetime, waveform = inst.Sampling(list_channels)
-    except pyvisa.VisaIOError as error:
-        print("The oscilloscope is not triggered more than 10s. VI_ERROR_TMO\n\033[33mA kindly remind: Check TRIGGER on oscilloscope, make sure you got a signal on the screen when press Single\033[0m")
-        print("The information below is prepared for experts:\n\033[31mVisaIOError\033[0m, meassage:{0}".format(error.args))
-        return False
+    wavetime, waveform = inst.Sampling(list_channels)
     for channel in list_channels.split(","):
         plt.plot(wavetime[channel], waveform[channel])
         print(len(waveform[channel]))
@@ -34,8 +29,6 @@ def SampleOnce(inst, list_channels='CH1,CH2'):
     plt.savefig('sample_once_{channels}'.format(
         channels=list_channels.replace(',', '_')))
     plt.show()
-
-    return True
 
 
 def Software_trigger(dic_scaled_time, dic_scaled_voltage):
@@ -109,26 +102,34 @@ if __name__ == "__main__":
     else:
         Scope = Oscilloscope(scope_name)
     # Loop from 0 to n_save_waveforms, save all wave form
+    t_list = []
     for i_waveform in range(0, n_save_waveforms):
+        t1 = time.time()
         # Autoset, you wont want this in our measurement!
         # Scope.Autoset()
         wavetime, waveform = Scope.Sampling(save_channels)
         while (not Software_trigger(wavetime, waveform)):
             wavetime, waveform = Scope.Sampling(save_channels)
-        print("time: {0}\nwaveform: {1}".format(wavetime, waveform))
         for _channel in save_channels.split(","):
             WriteToCsv("{3}/{0}-{1}-{2}.csv".format(output_filename, _channel,
                        str(i_waveform), output_dir), wavetime[_channel], waveform[_channel])
-            # time.sleep(0.5)
+        t2 = time.time()
 
-        if_mod_zero = i_waveform % (n_save_waveforms / 10)
-        if (if_mod_zero == 0):
-            percentage_of_job = float(i_waveform) / float(n_save_waveforms)
-            print(
-                "**************{0:.1f}% job is processed.***************".format(percentage_of_job*100))
+        t_list.append(t2-t1)
+        t_mean = np.mean(t_list)
+
+        percentage_of_job = float(i_waveform) / float(n_save_waveforms)
+        # clear screen
+        os.system("cls")
+        print( "**************{0:.1f}% job is processed.***************".format(percentage_of_job*100))
+        time_left = t_mean*(n_save_waveforms-i_waveform) # (s)
+        print(time.strftime("%Mmin %Ss", time.gmtime(time_left)), "left")
+    
     Scope.Close()
+    os.system("cls")
     end_time = time.time()
     event_rate = float(n_save_waveforms) / (end_time - begin_time)
+
     print("****************************")
     print("****************************")
     print("**  Event rate: {0:.2f}Hz **".format(event_rate))
