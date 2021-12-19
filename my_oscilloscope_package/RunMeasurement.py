@@ -20,7 +20,13 @@ import pyvisa
 from Oscilloscope import Oscilloscope, WriteToCsv
 
 def SampleOnce(inst, list_channels='CH1,CH2'):
-    wavetime, waveform = inst.Sampling(list_channels)
+    try:
+        wavetime, waveform = inst.Sampling(list_channels)
+        wavetime, waveform = inst.Sampling(list_channels)
+    except pyvisa.VisaIOError as error:
+        print("The oscilloscope is not triggered more than 10s. VI_ERROR_TMO\n\033[33mA kindly remind: Check TRIGGER on oscilloscope, make sure you got a signal on the screen when press Single\033[0m")
+        print("The information below is prepared for experts:\n\033[31mVisaIOError\033[0m, meassage:{0}".format(error.args))
+        return False
     for channel in list_channels.split(","):
         plt.plot(wavetime[channel], waveform[channel])
         print(len(waveform[channel]))
