@@ -57,7 +57,9 @@ If the setup is correct, you will got a plot contain waveforms from CH1 and CH2
 
 
 ## Get some help
-Example: $python  xxx.py --help  
+```bash
+python  xxx.py --help  
+```
 Read the comments on the begin of each scripts  
 
 ## Other materials
