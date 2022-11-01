@@ -16,8 +16,10 @@ Please install libserial or other lib as backen
 ```bash
 pip install oscilloscope-scripts-xzf8971  
 ```
+#### Install package from github with pip
 ```bash
-pip install git+
+pip install git+https://github.com/xzf89718/oscilloscope_scripts
+```
 Get source code from github:  
 ```bash
 git clone git@github.com:xzf89718/oscilloscope_scripts.git
