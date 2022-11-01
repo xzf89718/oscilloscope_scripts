@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: oscilloscope-scripts-xzf8971
+Version: 1.0.0
+Summary: A package to control and read data from oscilloscope. Support TekTronix TBS2000B now.
+Author-email: Zifeng <zifeng.xu@foxmail.com>
+Project-URL: Homepage, https://github.com/xzf89718/oscilloscope_scripts
+Project-URL: Bug Tracker, https://github.com/xzf89718/oscilloscope_scripts/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Oscilloscope scripts
 This project contains interface to help you collect waveform data from osilloscope and transform them into root file.
 ## Getting started  
@@ -28,24 +42,23 @@ virtualenv -p 3.8 ~/pyvisa_3d8
 ~/pyvisa_3d8/Scripts/activate  
 ```
 
-## How to use this package
+## How to
 ### Every Login
 ```bash
 cd ~/pyvisa_3d8/Scripts     
 .\activate  
 ```
-### Use Tektronix_TBS2000B_scripts for TBS2000B DAQ
+### Example
+### RunMeasurement.py 
 #### Batch mode  
 ```bash
 python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch
 # On macOS or linux
-# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch --backen pyvisa-py
+# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch
 ```
 #### Interactive mode (for debug)
 ```bash
 python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode inter
-# On macOS or linux
-# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode inter --backen pyvisa-py
 Enter your scope_name, also provide "default" and "auto" for quick setup  
 auto  
 ```

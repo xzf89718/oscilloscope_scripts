@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "numpy", "matplotlib", "pyserial", "pyvisa", "pyvisa-py", "pandas"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oscilloscope_scripts_xzf8971"
+version = "1.0.0"
+authors = [
+  { name="Zifeng", email="zifeng.xu@foxmail.com" },
+]
+description = "A package to control and read data from oscilloscope. Support TekTronix TBS2000B now."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/xzf89718/oscilloscope_scripts"
+"Bug Tracker" = "https://github.com/xzf89718/oscilloscope_scripts/issues"
