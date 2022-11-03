@@ -1,6 +1,6 @@
 # Oscilloscope scripts
 
-This project contains interface to help you collect waveform data from osilloscope and transform them into root file. If you prefer old version follow the slides. Please check here: https://github.com/xzf89718/oscilloscope_scripts/tree/v7.2 and https://github.com/xzf89718/oscilloscope_scripts/releases/tag/v7.2
+This project contains interface to help you collect waveform data from osilloscope. TekTronix TBS2000B is supported now. If you prefer old version follow the course slides. Please check here: https://github.com/xzf89718/oscilloscope_scripts/tree/v7.2 and https://github.com/xzf89718/oscilloscope_scripts/releases/tag/v7.2
 
 ## Getting started  
 ### Setup python and NI-VISA  
