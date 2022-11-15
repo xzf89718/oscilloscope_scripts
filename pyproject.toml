@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0", "numpy", "matplotlib", "pyserial", "pyvisa", "pyvisa-py", "pandas"]
+requires = ["setuptools>=61.0", "setuptools-scm", "cython ~= 0.29.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "oscilloscope_scripts_xzf8971"
-version = "1.0.0"
+version = "1.1.0"
 authors = [
   { name="Zifeng", email="zifeng.xu@foxmail.com" },
 ]
@@ -16,6 +16,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = ["numpy", "matplotlib", "pyserial", "pyvisa", "pyvisa-py", "pandas"]
 
 [project.urls]
 "Homepage" = "https://github.com/xzf89718/oscilloscope_scripts"
