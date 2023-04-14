@@ -10,7 +10,7 @@ https://www.python.org/downloads/release/python-383/
 NI-VISA:   
 https://www.ni.com/zh-cn/support/downloads/drivers/download.ni-visa.html  
 #### For Linux/Mac OS 
-Please install libserial or other lib as backen  
+Please install libserial libusb pyserial pyusb and install pure python base pyvisa-py
 ### Install   
 #### Install package with pip     
 ```bash
