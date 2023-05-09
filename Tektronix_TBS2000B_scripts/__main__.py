@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument("--scope_name", type=str, default="default",
                         help="scope_name, every oscilloscope has its own name, which is needed when instantiate the Scope, default, auto, and specify the name you like is supported")
     parser.add_argument("--mode", type=str, choices=["batch", "inter"], required=True, help="Supported options: inter batch")
-    parser.add_argument("--backen", type=str, default="NIVISA", choices=["NIVISA", "pyvisa-py"], help="Supported options: NIVISA, pyvisa-py")
+    parser.add_argument("--backend", type=str, default="NIVISA", choices=["NIVISA", "pyvisa-py"], help="Supported options: NIVISA, pyvisa-py. For Microsoft's Windows, use the NIVISA. For MacOS or Linux, please use pyvisa-py(acompanied with libusb libserial and there Python interfaces).")
     args = parser.parse_args()
     print("All parameters get from commandline are:")
     print(args)
@@ -42,12 +42,12 @@ if __name__ == "__main__":
     output_dir = args.output_dir
     scope_name = args.scope_name
     mode = args.mode
-    backen = args.backen
+    backend = args.backend
 
     print("Here are instruments' name you have:")
-    if (backen == "NIVISA"):
+    if (backend == "NIVISA"):
         resource_manager = pyvisa.ResourceManager()
-    elif (backen == "pyvisa-py"):
+    elif (backend == "pyvisa-py"):
         resource_manager = pyvisa.ResourceManager("@py")
     inst_name = resource_manager.list_resources()
     print("{0}".format(inst_name))

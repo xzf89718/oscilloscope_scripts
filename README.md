@@ -43,13 +43,13 @@ cd ~/pyvisa_3d8/Scripts
 ```bash
 python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch
 # On macOS or linux
-# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch --backen pyvisa-py
+# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode batch --backend pyvisa-py
 ```
 #### Interactive mode (for debug)
 ```bash
 python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode inter
 # On macOS or linux
-# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode inter --backen pyvisa-py
+# python -m Tektronix_TBS2000B_scripts this_is_an_example --n_save_waveforms 5 --save_channels CH1,CH2 --output_dir output_dir --scope_name auto --mode inter --backend pyvisa-py
 Enter your scope_name, also provide "default" and "auto" for quick setup  
 auto  
 ```
